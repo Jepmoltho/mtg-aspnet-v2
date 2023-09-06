@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "Z9HN5ost4btUpGfWqCBkaRX95/F6Uh49jTthUdsPB3r6pU/5uDzOXUfsNV0n29Ugnpqem955bqxiPYmGl7k3sQ==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\jmt.it-minds.dk\\Documents\\Repos\\mtg-aspnet-v2\\Frontend\\mtg-aspnet-v2.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\jmt.it-minds.dk\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}
