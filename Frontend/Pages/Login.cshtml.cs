@@ -30,7 +30,6 @@ namespace mtg_aspnet.Pages
                 string password = this.Password;
 
                 string userData = await _clientApi.GetUserByUsernameAndPassword(username, password);
-                //Console.WriteLine(userData);
 
                 if (!string.IsNullOrEmpty(userData))
                 {
@@ -40,8 +39,7 @@ namespace mtg_aspnet.Pages
                     HttpContext.Session.SetString("UserName", userName);
                     Console.WriteLine("Success! " + userName + " logged in");
 
-                    //return Page();
-                    return RedirectToPage("/Index");
+                    return RedirectToPage("/Index");  //return Page();
                 }
                 else
                 {
@@ -52,7 +50,7 @@ namespace mtg_aspnet.Pages
             }
             catch (Exception ex)
             {
-                //Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.Message);
                 return RedirectToPage("/Login");
             }
         }

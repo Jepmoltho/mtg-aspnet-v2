@@ -1,9 +1,6 @@
 @page
 @{
     ViewData["Title"] = "Login";
-    //string username = ViewData["UserName"] as string;
-    //ViewData["UserName"] = HttpContext.Session.GetString("UserName");
-    //ViewData["UserId"] = HttpContext.Session.GetString("UserId");
     string? username = HttpContext.Session.GetString("UserName");
 }
 @model mtg_aspnet.Pages.LoginModel
@@ -12,7 +9,7 @@
 
 <div class="login-container">
     @{
-        if (!string.IsNullOrEmpty(username) != null)
+        if (!string.IsNullOrEmpty(username))
         {
             <h2 class="logged-in-text">Logged in as @username</h2>
         }
@@ -42,5 +39,9 @@
     .logged-in-text {
         padding-bottom: 20px;
         margin-bottom: 0px;
+    }
+
+    .login-container {
+        padding-top: 40px;
     }
 </style>

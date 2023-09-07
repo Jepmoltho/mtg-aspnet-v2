@@ -7,7 +7,7 @@
 
 }
 
-<div class="index-body-container ">
+<div class="index-body-container">
     <div class="row">
         <div class="login">
         </div>
@@ -32,6 +32,22 @@
             {
                 <h2>Select your cards</h2>
             }
+            <div class="card-selection">
+                <form>
+                    <label for="itemDropdown">Select sets</label>
+                    <select id="itemDropdown">
+                        <option value="test">test</option>
+
+                        @if (Model.Sets != null && Model.Sets.Any())
+                        {
+                            @foreach (var setname in Model.Sets)
+                            {
+                                <option value="@setname">@setname</option>
+                            }
+                        }
+                    </select>
+                </form>
+            </div>
         </div>
     </div>
 </div>
