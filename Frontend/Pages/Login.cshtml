@@ -1,12 +1,23 @@
 @page
 @{
     ViewData["Title"] = "Login";
+    //string username = ViewData["UserName"] as string;
+    //ViewData["UserName"] = HttpContext.Session.GetString("UserName");
+    //ViewData["UserId"] = HttpContext.Session.GetString("UserId");
+    string? username = HttpContext.Session.GetString("UserName");
 }
 @model mtg_aspnet.Pages.LoginModel
 
 
+
 <h2>Login</h2½>
     <div class="login-container">
+        @{
+            if (!string.IsNullOrEmpty(username) != null)
+            {
+                <p>Welcome @username</p>
+            }
+        }
         <form method="post">
             <div class="form-group">
                 <label for="username">Username</label>

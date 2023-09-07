@@ -70,6 +70,32 @@ namespace Frontend.ClientApi
                 return null;
             }
         }
+
+        public async Task<string> GetCardsByUserId(int userId)
+        {
+            try
+            {
+                string endpoint = $"Mtg/cardsfromuser/{userId}";
+                HttpResponseMessage response = await this.httpClient.GetAsync(endpoint);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string data = await response.Content.ReadAsStringAsync();
+                    //Console.WriteLine(data);
+                    return data;
+                }
+                else
+                {
+                    Console.WriteLine("Error: " + response.StatusCode);
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
+        }
     }
 }
 

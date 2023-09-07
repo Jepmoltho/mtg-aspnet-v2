@@ -1,10 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Frontend.ClientApi;
-using System.Linq.Expressions;
+using Newtonsoft.Json;
 
 namespace mtg_aspnet.Pages
 {
@@ -33,16 +30,30 @@ namespace mtg_aspnet.Pages
                 string password = this.Password;
 
                 string userData = await _clientApi.GetUserByUsernameAndPassword(username, password);
-                Console.WriteLine(userData);
+                //Console.WriteLine(userData);
 
                 if (!string.IsNullOrEmpty(userData))
                 {
-                    Console.WriteLine("Success!");
-                    return RedirectToPage("/Index");
+                    string userName = JsonConvert.DeserializeObject<UserResponse>(userData).UserName;
+                    int userId = JsonConvert.DeserializeObject<UserResponse>(userData).UserId;
+                    //this.Username = userName;
+                    //this.Password = password;
+                    // ViewData["UserId"] = userId;
+                    // ViewData["UserName"] = userName;
+                    // ViewData["test"] = "string";
+                    // Console.WriteLine(ViewData["UserName"]);
+                    // Console.WriteLine(ViewData["UserId"]);
+                    HttpContext.Session.SetInt32("UserId", userId);
+                    HttpContext.Session.SetString("UserName", userName);
+                    Console.WriteLine("Success! " + userName + " logged in");
+
+                    return Page();
+                    //return RedirectToPage("/Login");
+                    //return RedirectToPage("/Index");
                 }
                 else
                 {
-                    //Console.WriteLine("Failure!");
+                    Console.WriteLine("Failed to login!");
                     return RedirectToPage("/Login");
                 }
 
@@ -53,19 +64,26 @@ namespace mtg_aspnet.Pages
                 return RedirectToPage("/Login");
             }
         }
+    }
 
-        //test
-        // public async Task OnGetAsync()
-        // {
-        //     string username = await _clientApi.GetDataForUser(36);
-
-        //     if (username != null)
-        //     {
-        //         //string username = JsonConvert.DeserializeObject<UserResponse>(User).UserName;
-        //         //Console.WriteLine(username);
-        //         this.Usernametest = username;
-        //     }
-        // }
-
+    public class UserResponse
+    {
+        public int UserId { get; set; }
+        public string UserName { get; set; }
+        public string Password { get; set; }
+        public List<string> Cards { get; set; }
     }
 }
+
+//test
+// public async Task OnGetAsync()
+// {
+//     string username = await _clientApi.GetDataForUser(36);
+
+//     if (username != null)
+//     {
+//         //string username = JsonConvert.DeserializeObject<UserResponse>(User).UserName;
+//         //Console.WriteLine(username);
+//         this.Usernametest = username;
+//     }
+// }

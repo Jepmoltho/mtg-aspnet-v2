@@ -11,9 +11,10 @@
         <div class="col-md-3">
             <h2>Your cards </h1>
                 <ul>
-                    <li>card1</li>
-                    <li>card1</li>
-                    <li>card1</li>
+                    @foreach (var card in Model.Cards)
+                    {
+                        <li>@card</li>
+                    }
                 </ul>
         </div>
         <div class="col-md-9 text-center">
