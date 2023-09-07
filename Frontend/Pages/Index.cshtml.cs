@@ -26,6 +26,7 @@ namespace mtg_aspnet_v2.Pages
 
         public List<string>? Cards { get; set; }
 
+        //Refactor to List<Set> where set is a class with name and code properties
         public List<string> Sets { get; set; }
 
         public async Task OnGetAsync()
@@ -83,6 +84,10 @@ namespace mtg_aspnet_v2.Pages
             return null;
         }
 
+
+
+
+
         public class UserResponse
         {
             public int UserId { get; set; }
@@ -95,6 +100,8 @@ namespace mtg_aspnet_v2.Pages
         {
             public string Title { get; set; }
         }
+
+
 
 
         public class Set
