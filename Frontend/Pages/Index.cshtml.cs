@@ -27,7 +27,7 @@ namespace mtg_aspnet_v2.Pages
         public List<string>? Cards { get; set; }
 
         //Refactor to List<Set> where set is a class with name and code properties
-        public List<string> Sets { get; set; }
+        public List<Set> Sets { get; set; }
 
         public async Task OnGetAsync()
         {
@@ -35,7 +35,7 @@ namespace mtg_aspnet_v2.Pages
             this.Cards = await DisplayOwnedCards();
         }
 
-        public async Task<List<string>> FetchSets()
+        public async Task<List<Set>> FetchSets()
         {
             string setsData = await _mtgApi.GetSetsFromMtgApi();
             string trimFirstSetsData = setsData.Replace("{\"sets\":", "");
@@ -46,7 +46,9 @@ namespace mtg_aspnet_v2.Pages
                 var setsArray = JsonConvert.DeserializeObject<List<Set>>(trimLastSetsData);
                 var setsArrayFiltered = setsArray.Where(s => s.OnlineOnly == false && s.Type == "core" || s.Type == "expansion");
                 //this.Sets = setsArrayFiltered.Select(s => s.Name).ToList();
-                return setsArrayFiltered.Select(s => s.Name).ToList();
+                //return (List<Set>)setsArrayFiltered;
+                return setsArray;
+                //return setsArrayFiltered.Select(s => s.Name).ToList();
             }
             else
             {
@@ -84,10 +86,6 @@ namespace mtg_aspnet_v2.Pages
             return null;
         }
 
-
-
-
-
         public class UserResponse
         {
             public int UserId { get; set; }
@@ -100,9 +98,6 @@ namespace mtg_aspnet_v2.Pages
         {
             public string Title { get; set; }
         }
-
-
-
 
         public class Set
         {
