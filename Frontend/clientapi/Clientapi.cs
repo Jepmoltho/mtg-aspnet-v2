@@ -43,30 +43,25 @@ namespace Frontend.ClientApi
             try
             {
                 string endpoint = $"Mtg/user/login/{username}/{password}";
-
-                Console.WriteLine(endpoint);
-                Console.WriteLine(httpClient.BaseAddress + endpoint);
+                //Console.WriteLine(httpClient.BaseAddress + endpoint);
 
                 HttpResponseMessage response = await this.httpClient.GetAsync(endpoint);
-                Console.WriteLine(response);
+                //Console.WriteLine(response);
 
                 if (response.IsSuccessStatusCode)
                 {
-                    Console.WriteLine("1");
                     string data = await response.Content.ReadAsStringAsync();
-                    Console.WriteLine(data);
-                    //Console.WriteLine("2" + data);
                     return data;
                 }
                 else
                 {
-                    //Console.WriteLine("Error: " + response.StatusCode);
+                    Console.WriteLine("Error: " + response.StatusCode);
                     return null;
                 }
             }
             catch (Exception ex)
             {
-                //Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.Message);
                 return null;
             }
         }

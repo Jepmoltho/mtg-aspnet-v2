@@ -30,26 +30,16 @@ namespace mtg_aspnet.Pages
                 string password = this.Password;
 
                 string userData = await _clientApi.GetUserByUsernameAndPassword(username, password);
-                //Console.WriteLine(userData);
 
                 if (!string.IsNullOrEmpty(userData))
                 {
                     string userName = JsonConvert.DeserializeObject<UserResponse>(userData).UserName;
                     int userId = JsonConvert.DeserializeObject<UserResponse>(userData).UserId;
-                    //this.Username = userName;
-                    //this.Password = password;
-                    // ViewData["UserId"] = userId;
-                    // ViewData["UserName"] = userName;
-                    // ViewData["test"] = "string";
-                    // Console.WriteLine(ViewData["UserName"]);
-                    // Console.WriteLine(ViewData["UserId"]);
                     HttpContext.Session.SetInt32("UserId", userId);
                     HttpContext.Session.SetString("UserName", userName);
                     Console.WriteLine("Success! " + userName + " logged in");
 
-                    return Page();
-                    //return RedirectToPage("/Login");
-                    //return RedirectToPage("/Index");
+                    return RedirectToPage("/Index");  //return Page();
                 }
                 else
                 {
@@ -60,7 +50,7 @@ namespace mtg_aspnet.Pages
             }
             catch (Exception ex)
             {
-                //Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.Message);
                 return RedirectToPage("/Login");
             }
         }

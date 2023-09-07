@@ -2,23 +2,71 @@
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
+    string? userName = HttpContext.Session.GetString("UserName");
+    //string? username = HttpContext.Session.GetString("UserName");
+
 }
 
-<div class="container">
+<div class="index-body-container">
     <div class="row">
         <div class="login">
         </div>
-        <div class="col-md-3">
-            <h2>Your cards </h1>
-                <ul>
+        <div class="your-cards-col col-md-3">
+            <h4>Your cards</h4>
+            <ul class="owned-cards-list">
+                @if (!string.IsNullOrEmpty(userName))
+                {
                     @foreach (var card in Model.Cards)
                     {
                         <li>@card</li>
                     }
-                </ul>
+                }
+            </ul>
         </div>
         <div class="col-md-9 text-center">
-            <h1>Hi @Model.UserName, Select your cards</h2>
+            @if (!string.IsNullOrEmpty(userName))
+            {
+                <h2>Hi @Model.UserName, Select your cards</h2>
+            }
+            else
+            {
+                <h2>Select your cards</h2>
+            }
+            <div class="card-selection">
+                <form>
+                    <label for="itemDropdown">Set: </label>
+                    <select id="itemDropdown">
+                        @* <option value="test">Select Set</option> *@
+
+                        @if (Model.Sets != null && Model.Sets.Any())
+                        {
+                            @foreach (var setname in Model.Sets)
+                            {
+                                <option value="@setname">@setname</option>
+                            }
+                        }
+                    </select>
+                </form>
+            </div>
+            <div class="cards-displayed">
+
+
+            </div>
         </div>
     </div>
 </div>
+
+<style>
+    .index-body-container {
+        padding-top: 40px;
+        padding-bottom: 40px;
+    }
+
+    .owned-cards-list {
+        list-style: none;
+        padding-left: 2px;
+        padding-right: 0;
+    }
+
+    .your-cards-col {}
+</style>
