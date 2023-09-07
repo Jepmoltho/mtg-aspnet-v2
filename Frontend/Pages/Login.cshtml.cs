@@ -36,20 +36,12 @@ namespace mtg_aspnet.Pages
                 {
                     string userName = JsonConvert.DeserializeObject<UserResponse>(userData).UserName;
                     int userId = JsonConvert.DeserializeObject<UserResponse>(userData).UserId;
-                    //this.Username = userName;
-                    //this.Password = password;
-                    // ViewData["UserId"] = userId;
-                    // ViewData["UserName"] = userName;
-                    // ViewData["test"] = "string";
-                    // Console.WriteLine(ViewData["UserName"]);
-                    // Console.WriteLine(ViewData["UserId"]);
                     HttpContext.Session.SetInt32("UserId", userId);
                     HttpContext.Session.SetString("UserName", userName);
                     Console.WriteLine("Success! " + userName + " logged in");
 
-                    return Page();
-                    //return RedirectToPage("/Login");
-                    //return RedirectToPage("/Index");
+                    //return Page();
+                    return RedirectToPage("/Index");
                 }
                 else
                 {
