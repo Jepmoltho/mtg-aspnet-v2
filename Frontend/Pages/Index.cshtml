@@ -16,7 +16,7 @@
             <ul class="owned-cards-list">
                 @if (!string.IsNullOrEmpty(userName))
                 {
-                    @foreach (var card in Model.Cards)
+                    @foreach (var card in Model.OwnedCards)
                     {
                         <li>@card</li>
                     }
@@ -35,22 +35,27 @@
             <div class="card-selection">
                 <form>
                     <label for="itemDropdown">Set: </label>
-                    <select id="itemDropdown">
-                        @* <option value="test">Select Set</option> *@
+                    <select id="itemDropdown" onchange="handleDropdownSelection()">
+                        <option value="Select set">Select set</option>
 
                         @if (Model.Sets != null && Model.Sets.Any())
                         {
                             @foreach (var setname in Model.Sets)
                             {
-                                <option value="@setname.Name">@setname.Name</option>
+                                <option value="@setname.Name" key="@setname.Code">@setname.Name</option>
                             }
                         }
                     </select>
                 </form>
             </div>
-            <div class="cards-displayed">
-
-
+            <div class="cards-displayed card-container">
+                @foreach (var card in Model.Cards)
+                {
+                    <div class="card" key="@card.Id">
+                        <img src="@card.ImageUrl" alt="@card.Name" />
+                        <p class="card-text">@card.Name</p>
+                    </div>
+                }
             </div>
         </div>
     </div>
@@ -69,4 +74,107 @@
     }
 
     .your-cards-col {}
+
+    .card-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .card {
+        max-width: min-content;
+        padding: 1rem;
+        background-color: inherit;
+        border: none;
+    }
+
+    img {
+        border-radius: 12px;
+    }
+
+    .card-text {
+        font-size: 1rem;
+    }
 </style>
+
+<script>
+
+    function handleDropdownSelection() {
+        var selectedSet = document.getElementById("itemDropdown");
+        var selectedKey = selectedSet.options[selectedSet.selectedIndex].getAttribute("key");
+
+        console.log("Selected key: " + selectedKey);
+        var url = "https://api.magicthegathering.io/v1/cards?set=";
+        fetch(url + selectedKey)
+            .then(response => response.json())
+            .then(data => {
+                // Generate HTML for cards
+                var cardHTML = '';
+                data.cards.forEach(function (card) {
+                    cardHTML += '<div class="card" key="' + card.id + '">';
+                    cardHTML += '<img src="' + card.imageUrl + '" alt="' + card.name + '" />';
+                    cardHTML += '<p class="card-text">' + card.name + '</p>';
+                    cardHTML += '</div>';
+                });
+                $(".cards-displayed").html(cardHTML);
+            });
+    }
+</script>
+
+@* function handleDropdownSelection() {
+var selectedSet = document.getElementById("itemDropdown");
+var selectedKey = selectedSet.options[selectedSet.selectedIndex].getAttribute("key");
+
+console.log("Selected key: " + selectedKey);
+var url = "https://api.magicthegathering.io/v1/cards?set=";
+fetch(url + selectedKey)
+.then(response => response.text())
+.then(data => {
+console.log(data);
+
+// Generate HTML for cards
+var cardHTML = '';
+data.cards.forEach(function (card) {
+cardHTML += '<div class="card" key="' + card.id + '">';
+cardHTML += '<img src="' + card.imageUrl + '" alt="' + card.name + '" />';
+cardHTML += '<p class="card-text">' + card.name + '</p>';
+cardHTML += '</div>';
+});
+
+console.log(cardHTML);
+$(".cards-displayed").html(cardHTML);
+});
+} *@
+
+@*
+//console.log("Selected key: " + selectedKey);
+//@Model.CurrSetCode = selectedKey;
+//console.log("Model.CurrSetCode: " + @Model.CurrSetCode);
+*@
+
+@* $(this).children("option:selected").val();
+$.ajax({
+type: "GET",
+url: "/Home/GetCards",
+data: { setName: selectedSet },
+success: function (data) {
+$(".cards-displayed").html(data);
+}
+});
+}
+*@
+
+@* $(document).ready(function () {
+$("#itemDropdown").change(function () {
+var selectedSet = $(this).children("option:selected").val();
+$.ajax({
+type: "GET",
+url: "/Home/GetCards",
+data: { setName: selectedSet },
+success: function (data) {
+$(".cards-displayed").html(data);
+}
+});
+});
+}); *@
