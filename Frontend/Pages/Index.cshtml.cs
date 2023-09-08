@@ -2,6 +2,8 @@
 using Frontend.ClientApi;
 using System.Text.Json;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Mvc;
+using System.Runtime.InteropServices;
 
 
 namespace mtg_aspnet_v2.Pages
@@ -21,23 +23,28 @@ namespace mtg_aspnet_v2.Pages
         }
 
         public string User { get; set; }
+
+        [BindProperty]
         public int? UserId { get; set; }
         public string? UserName { get; set; }
 
         public List<string>? OwnedCards { get; set; }
 
-        //Refactor to List<Set> where set is a class with name and code properties
         public List<Set> Sets { get; set; }
 
         public string CurrSetCode { get; set; }
 
         public List<Card> Cards { get; set; }
 
+        [BindProperty]
+        public string CardName { get; set; }
+
         public async Task OnGetAsync()
         {
             this.Sets = await FetchSets();
             this.OwnedCards = await DisplayOwnedCards();
             this.Cards = await FetchCardsFromSet(this.CurrSetCode); //2ED
+            //var actionResult = await OnPostCardAsync(37, "Red lotus");
         }
 
         public async Task<List<Set>> FetchSets()
@@ -64,18 +71,12 @@ namespace mtg_aspnet_v2.Pages
         public async Task<List<Card>> FetchCardsFromSet(string setCode)
         {
             string cardsData = await _mtgApi.GetCardsFromSetMtgApi(setCode);
-            //Console.WriteLine(cardsData);
             string trimFirstCardsData = cardsData.Replace("{\"cards\":", "");
             string trimLastCardsData = trimFirstCardsData.Remove(trimFirstCardsData.Length - 1);
             if (!string.IsNullOrEmpty(cardsData))
             {
                 var cardsArray = JsonConvert.DeserializeObject<List<Card>>(trimLastCardsData);
-                // foreach (var card in cardsArray)
-                // {
-                //     Console.WriteLine(card.Name);
-                // }
                 return cardsArray;
-                //return new List<Card>();
             }
             else
             {
@@ -94,7 +95,6 @@ namespace mtg_aspnet_v2.Pages
                     string cardsData = await _clientApi.GetCardsByUserId((int)this.UserId);
                     if (!string.IsNullOrEmpty(cardsData))
                     {
-                        //Console.WriteLine(cardsData);
                         var cardList = JsonConvert.DeserializeObject<List<OwnedCard>>(cardsData);
                         List<string> cardTitles = cardList.Select(c => c.Title).ToList();
                         return cardTitles;
@@ -111,6 +111,26 @@ namespace mtg_aspnet_v2.Pages
                 }
             }
             return null;
+        }
+
+        public async Task<IActionResult> OnPostCardAsync()
+        {
+            try
+            {
+                string cardName = this.CardName;
+                int userId = (int)this.UserId;
+
+                var data = await _clientApi.PostCardToUser(userId, cardName);
+
+                //return Page(); 
+                return RedirectToPage("/Index");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return RedirectToPage("/Index");
+                //return Page();
+            }
         }
 
         public class UserResponse

@@ -1,4 +1,5 @@
 using System.Net.Http;
+using System.Text;
 
 
 namespace Frontend.ClientApi
@@ -91,6 +92,62 @@ namespace Frontend.ClientApi
                 return null;
             }
         }
+
+        //post card to user
+        public async Task<string> PostCardToUser(int userId, string title)
+        {
+            try
+            {
+                //https://localhost:5001/Mtg/card/Black%20lotus/28
+                string endpoint = $"Mtg/card/{title}/{userId}";
+                HttpResponseMessage response = await this.httpClient.PostAsync(endpoint, new StringContent(title, Encoding.UTF8, "application/json"));
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string data = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine("Succesfully posted card: " + data);
+                    return data;
+                }
+                else
+                {
+                    Console.WriteLine("Error: " + response.StatusCode);
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
+        }
+
+        //post card to user
+        // public async Task<string> PostCardToUser(int userId, string title)
+        // {
+        //     try
+        //     {
+        //         string endpoint = $"Mtg/card/{userId}";
+        //         HttpResponseMessage response = await this.httpClient.PostAsync(endpoint, new StringContent(title, Encoding.UTF8, "application/json"));
+
+        //         if (response.IsSuccessStatusCode)
+        //         {
+        //             string data = await response.Content.ReadAsStringAsync();
+        //             //Console.WriteLine(data);
+        //             return data;
+        //         }
+        //         else
+        //         {
+        //             Console.WriteLine("Error: " + response.StatusCode);
+        //             return null;
+        //         }
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         Console.WriteLine(ex.Message);
+        //         return null;
+        //     }
+        // }
+
     }
 }
 

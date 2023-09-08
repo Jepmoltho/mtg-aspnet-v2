@@ -3,8 +3,7 @@
 @{
     ViewData["Title"] = "Home page";
     string? userName = HttpContext.Session.GetString("UserName");
-    //string? username = HttpContext.Session.GetString("UserName");
-
+    int? userId = HttpContext.Session.GetInt32("UserId");
 }
 
 <div class="index-body-container">
@@ -14,14 +13,25 @@
         <div class="your-cards-col col-md-3">
             <h4>Your cards</h4>
             <ul class="owned-cards-list">
-                @if (!string.IsNullOrEmpty(userName))
+                @if (!string.IsNullOrEmpty(userName) && Model.OwnedCards != null && Model.OwnedCards.Any())
                 {
+
                     @foreach (var card in Model.OwnedCards)
                     {
                         <li>@card</li>
                     }
+
                 }
             </ul>
+            <h4>Add card by name</h4>
+            <form method="post" asp-page-handler="Card">
+                <input type="text" id="cardName" name="CardName" placeholder="Enter card name" />
+                <input type="hidden" asp-for="UserId" value="@userId" />
+                <input type="submit" value="Add Card" />
+            </form>
+
+
+
         </div>
         <div class="col-md-9 text-center">
             @if (!string.IsNullOrEmpty(userName))
@@ -49,12 +59,15 @@
                 </form>
             </div>
             <div class="cards-displayed card-container">
-                @foreach (var card in Model.Cards)
+                @if (Model.Cards != null && Model.Cards.Any())
                 {
-                    <div class="card" key="@card.Id">
-                        <img src="@card.ImageUrl" alt="@card.Name" />
-                        <p class="card-text">@card.Name</p>
-                    </div>
+                    @foreach (var card in Model.Cards)
+                    {
+                        <div class="card" key="@card.Id">
+                            <img src="@card.ImageUrl" alt="@card.Name" />
+                            <p class="card-text">@card.Name</p>
+                        </div>
+                    }
                 }
             </div>
         </div>
@@ -121,60 +134,3 @@
             });
     }
 </script>
-
-@* function handleDropdownSelection() {
-var selectedSet = document.getElementById("itemDropdown");
-var selectedKey = selectedSet.options[selectedSet.selectedIndex].getAttribute("key");
-
-console.log("Selected key: " + selectedKey);
-var url = "https://api.magicthegathering.io/v1/cards?set=";
-fetch(url + selectedKey)
-.then(response => response.text())
-.then(data => {
-console.log(data);
-
-// Generate HTML for cards
-var cardHTML = '';
-data.cards.forEach(function (card) {
-cardHTML += '<div class="card" key="' + card.id + '">';
-cardHTML += '<img src="' + card.imageUrl + '" alt="' + card.name + '" />';
-cardHTML += '<p class="card-text">' + card.name + '</p>';
-cardHTML += '</div>';
-});
-
-console.log(cardHTML);
-$(".cards-displayed").html(cardHTML);
-});
-} *@
-
-@*
-//console.log("Selected key: " + selectedKey);
-//@Model.CurrSetCode = selectedKey;
-//console.log("Model.CurrSetCode: " + @Model.CurrSetCode);
-*@
-
-@* $(this).children("option:selected").val();
-$.ajax({
-type: "GET",
-url: "/Home/GetCards",
-data: { setName: selectedSet },
-success: function (data) {
-$(".cards-displayed").html(data);
-}
-});
-}
-*@
-
-@* $(document).ready(function () {
-$("#itemDropdown").change(function () {
-var selectedSet = $(this).children("option:selected").val();
-$.ajax({
-type: "GET",
-url: "/Home/GetCards",
-data: { setName: selectedSet },
-success: function (data) {
-$(".cards-displayed").html(data);
-}
-});
-});
-}); *@

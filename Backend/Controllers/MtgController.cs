@@ -74,29 +74,48 @@ namespace Backend.Controllers
             return Ok(cards);
         }
 
-
-        // Return list of users
-        // [HttpGet("user/{userId}")]
-        // public ActionResult<IEnumerable<User>> GetUser(int userId){
-        //     var users = _context.Users
-        //     .Include(u => u.Cards)
-        //     .FirstOrDefault(u => u.UserId == userId);
-
-        //     return Ok(users);
-        // }
-
-        // Return single user
-        // [HttpGet("user/{userId}")]
-        // public ActionResult<User> GetUser(int userId){
-        //     var users = _context.Users
-        //     .Include(u => u.Cards)
-        //     .FirstOrDefault(u => u.UserId == userId);
-
-        //     return Ok(users);
-        // }
+        //https://localhost:5001/Mtg/card/37
+        //post card to a userid
+        [HttpPost("card/{cardname}/{userId}")]
+        public ActionResult<int> PostCard(string cardname, int userId)
+        {
+            _context.Cards.Add(new Card { Title = cardname, UserId = userId });
+            _context.SaveChanges();
+            return Ok(userId);
+        }
     }
-
 }
+
+
+//    [HttpPost("card/{userId}")]
+//     public ActionResult<int> PostCard(Card card, int userId)
+//     {
+//         card.UserId = userId;
+//         _context.Entry(card).State = EntityState.Added;
+//         _context.SaveChanges();
+//         return Ok(card.CardId);
+//     }
+
+// Return list of users
+// [HttpGet("user/{userId}")]
+// public ActionResult<IEnumerable<User>> GetUser(int userId){
+//     var users = _context.Users
+//     .Include(u => u.Cards)
+//     .FirstOrDefault(u => u.UserId == userId);
+
+//     return Ok(users);
+// }
+
+// Return single user
+// [HttpGet("user/{userId}")]
+// public ActionResult<User> GetUser(int userId){
+//     var users = _context.Users
+//     .Include(u => u.Cards)
+//     .FirstOrDefault(u => u.UserId == userId);
+
+//     return Ok(users);
+// }
+
 /*
 ASP.NET MVC architectural pattern
 
