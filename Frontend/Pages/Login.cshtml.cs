@@ -22,7 +22,7 @@ namespace mtg_aspnet.Pages
             _clientApi = new ClientApi();
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostLoginAsync()
         {
             try
             {
