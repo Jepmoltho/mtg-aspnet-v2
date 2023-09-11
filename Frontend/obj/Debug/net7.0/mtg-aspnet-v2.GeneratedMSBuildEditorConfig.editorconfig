@@ -9,41 +9,41 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = mtg_aspnet_v2
 build_property.RootNamespace = mtg_aspnet_v2
-build_property.ProjectDir = C:\Users\jmt.it-minds.dk\Documents\Repos\mtg-aspnet-v2\Frontend\
+build_property.ProjectDir = c:\Users\jmt.it-minds.dk\Documents\Repos\mtg-aspnet-v2\Frontend\
 build_property.RazorLangVersion = 7.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = C:\Users\jmt.it-minds.dk\Documents\Repos\mtg-aspnet-v2\Frontend
+build_property.MSBuildProjectDirectory = c:\Users\jmt.it-minds.dk\Documents\Repos\mtg-aspnet-v2\Frontend
 build_property._RazorSourceGeneratorDebug = 
 
-[C:/Users/jmt.it-minds.dk/Documents/Repos/mtg-aspnet-v2/Frontend/Pages/Error.cshtml]
+[c:/Users/jmt.it-minds.dk/Documents/Repos/mtg-aspnet-v2/Frontend/Pages/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXJyb3IuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/jmt.it-minds.dk/Documents/Repos/mtg-aspnet-v2/Frontend/Pages/Index.cshtml]
+[c:/Users/jmt.it-minds.dk/Documents/Repos/mtg-aspnet-v2/Frontend/Pages/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/jmt.it-minds.dk/Documents/Repos/mtg-aspnet-v2/Frontend/Pages/Login.cshtml]
+[c:/Users/jmt.it-minds.dk/Documents/Repos/mtg-aspnet-v2/Frontend/Pages/Login.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTG9naW4uY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/jmt.it-minds.dk/Documents/Repos/mtg-aspnet-v2/Frontend/Pages/Privacy.cshtml]
+[c:/Users/jmt.it-minds.dk/Documents/Repos/mtg-aspnet-v2/Frontend/Pages/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUHJpdmFjeS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/jmt.it-minds.dk/Documents/Repos/mtg-aspnet-v2/Frontend/Pages/Shared/_ValidationScriptsPartial.cshtml]
+[c:/Users/jmt.it-minds.dk/Documents/Repos/mtg-aspnet-v2/Frontend/Pages/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/jmt.it-minds.dk/Documents/Repos/mtg-aspnet-v2/Frontend/Pages/_ViewImports.cshtml]
+[c:/Users/jmt.it-minds.dk/Documents/Repos/mtg-aspnet-v2/Frontend/Pages/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/jmt.it-minds.dk/Documents/Repos/mtg-aspnet-v2/Frontend/Pages/_ViewStart.cshtml]
+[c:/Users/jmt.it-minds.dk/Documents/Repos/mtg-aspnet-v2/Frontend/Pages/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/jmt.it-minds.dk/Documents/Repos/mtg-aspnet-v2/Frontend/Pages/Shared/_Layout.cshtml]
+[c:/Users/jmt.it-minds.dk/Documents/Repos/mtg-aspnet-v2/Frontend/Pages/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-a0j8jkc5kl
