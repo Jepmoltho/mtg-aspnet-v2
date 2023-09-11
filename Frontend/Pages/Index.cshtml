@@ -8,30 +8,32 @@
 
 <div class="index-body-container">
     <div class="row">
-        <div class="login">
+        <div class="@userId" id="user">
         </div>
         <div class="your-cards-col col-md-3">
+            <div class="add-card-by-name">
+                <h4>Add card by name</h4>
+                <form method="post" asp-page-handler="Card">
+                    <input type="text" id="cardName" name="CardName" placeholder="Enter card name" />
+                    <input type="hidden" asp-for="UserId" value="@userId" />
+                    <input type="submit" value="Add Card" />
+                </form>
+            </div>
+            <div class="add-card-by-select">
+                <h4>Selected cards</h4>
+                <div id="selectedCardsList"></div>
+                <button type="button" id="ajax-submit-button" onclick="submitAjaxForm()">Submit</button>
+            </div>
             <h4>Your cards</h4>
             <ul class="owned-cards-list">
                 @if (!string.IsNullOrEmpty(userName) && Model.OwnedCards != null && Model.OwnedCards.Any())
                 {
-
                     @foreach (var card in Model.OwnedCards)
                     {
                         <li>@card</li>
                     }
-
                 }
             </ul>
-            <h4>Add card by name</h4>
-            <form method="post" asp-page-handler="Card">
-                <input type="text" id="cardName" name="CardName" placeholder="Enter card name" />
-                <input type="hidden" asp-for="UserId" value="@userId" />
-                <input type="submit" value="Add Card" />
-            </form>
-
-
-
         </div>
         <div class="col-md-9 text-center">
             @if (!string.IsNullOrEmpty(userName))
@@ -47,7 +49,6 @@
                     <label for="itemDropdown">Set: </label>
                     <select id="itemDropdown" onchange="handleDropdownSelection()">
                         <option value="Select set">Select set</option>
-
                         @if (Model.Sets != null && Model.Sets.Any())
                         {
                             @foreach (var setname in Model.Sets)
@@ -58,17 +59,9 @@
                     </select>
                 </form>
             </div>
-            <div class="cards-displayed card-container">
-                @if (Model.Cards != null && Model.Cards.Any())
-                {
-                    @foreach (var card in Model.Cards)
-                    {
-                        <div class="card" key="@card.Id">
-                            <img src="@card.ImageUrl" alt="@card.Name" />
-                            <p class="card-text">@card.Name</p>
-                        </div>
-                    }
-                }
+            <div class="cards-displayed">
+                <div class="card-container" id="select-cards-form">
+                </div>
             </div>
         </div>
     </div>
@@ -80,13 +73,25 @@
         padding-bottom: 40px;
     }
 
+    .add-card-by-name {
+        padding-top: 100px;
+        padding-bottom: 40px;
+    }
+
+    .add-card-by-select {
+        padding-bottom: 40px;
+    }
+
+
     .owned-cards-list {
         list-style: none;
         padding-left: 2px;
         padding-right: 0;
     }
 
-    .your-cards-col {}
+    .card-selection {
+        padding-bottom: 20px;
+    }
 
     .card-container {
         display: flex;
@@ -109,14 +114,33 @@
     .card-text {
         font-size: 1rem;
     }
+
+    .card:hover {
+        cursor: pointer;
+        background-color: #e9ecef;
+    }
+
+    #selectedCardsList>p {
+        margin-bottom: 2px;
+    }
+
+    #selectedCardsList {
+        padding-bottom: 10px;
+    }
 </style>
 
 <script>
 
     function handleDropdownSelection() {
-        var selectedSet = document.getElementById("itemDropdown");
-        var selectedKey = selectedSet.options[selectedSet.selectedIndex].getAttribute("key");
-
+        var selectedSet;
+        var selectedKey;
+        if (document.getElementById("itemDropdown").selectedIndex == 0) {
+            selectedSet = "LEA";
+            selectedKey = "LEA";
+        } else {
+            selectedSet = document.getElementById("itemDropdown");
+            selectedKey = selectedSet.options[selectedSet.selectedIndex].getAttribute("key");
+        }
         console.log("Selected key: " + selectedKey);
         var url = "https://api.magicthegathering.io/v1/cards?set=";
         fetch(url + selectedKey)
@@ -125,12 +149,92 @@
                 // Generate HTML for cards
                 var cardHTML = '';
                 data.cards.forEach(function (card) {
-                    cardHTML += '<div class="card" key="' + card.id + '">';
+                    cardHTML += '<div class="card" key="' + card.id + '" onclick="handleCardClick(\'' + card.name + '\')">';
                     cardHTML += '<img src="' + card.imageUrl + '" alt="' + card.name + '" />';
                     cardHTML += '<p class="card-text">' + card.name + '</p>';
                     cardHTML += '</div>';
                 });
-                $(".cards-displayed").html(cardHTML);
+                cardHTML += '<input type="hidden" id="selectedCardsInput" name="SelectedCards" />';
+                $(".card-container").html(cardHTML);
+            });
+
+    }
+
+    var selectedCards = [];
+
+    function handleCardClick(cardName) {
+        if (selectedCards.includes(cardName)) {
+            selectedCards = selectedCards.filter(item => item !== cardName);
+        } else {
+            selectedCards.push(cardName);
+        }
+        console.log(selectedCards);
+        displaySelectedCards();
+    }
+
+
+    function submitAjaxForm() {
+
+        var userid;
+        if (document.getElementById("user").classList.length == 0) {
+            userid = 0;
+            window.alert("Please log in to save your cards");
+        } else {
+            userid = document.getElementById("user").classList[0];
+        }
+
+        var cardNames = selectedCards;
+
+        var data = {
+            userId: userid,
+            cardNames: cardNames
+        };
+
+        fetch('https://localhost:5001/Mtg/cards/' + userid, {
+            method: 'POST',
+            headers: {
+                'Accept': 'text/plain',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.text();
+                } else {
+                    throw new Error('Request failed with status: ' + response.status);
+                }
+            })
+            .then(data => {
+                // Handle the response data (if needed)
+                console.log('Response:', data);
+                window.location.reload();
+            })
+            .catch(error => {
+                // Handle any network or other errors
+                console.error('Error:', error);
             });
     }
+
+    function displaySelectedCards() {
+        var selectedCardsList = document.getElementById('selectedCardsList');
+        if (selectedCardsList) {
+            selectedCardsList.innerHTML = ''; // Clear previous content
+            selectedCards.forEach(function (card) {
+                var cardElement = document.createElement('p');
+                cardElement.textContent = card;
+                selectedCardsList.appendChild(cardElement);
+            });
+        }
+    }
+
+
+    window.onload = handleDropdownSelection();
+
+
+    @* function submitForm() {
+        document.getElementById("selectedCardsInput").value = selectedCards.join(",");
+        document.getElementById("select-cards-form").submit();
+        } *@
+
 </script>

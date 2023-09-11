@@ -1,5 +1,6 @@
 using System.Net.Http;
 using System.Text;
+using Newtonsoft.Json;
 
 
 namespace Frontend.ClientApi
@@ -120,6 +121,71 @@ namespace Frontend.ClientApi
                 return null;
             }
         }
+
+        public async Task<string> PostCardsToUser(int userId, List<string> cardNames)
+        {
+            try
+            {
+                var cardInputDto = new CardsInputDto { UserId = userId, CardNames = cardNames };
+                var jsonContent = JsonConvert.SerializeObject(cardInputDto);
+
+                HttpResponseMessage response = await this.httpClient.PostAsync($"Mtg/cards/{userId}", new StringContent(jsonContent, Encoding.UTF8, "application/json"));
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string data = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine("Succesfully posted cards: " + data);
+                    return data;
+                }
+                else
+                {
+                    Console.WriteLine("Error: " + response.StatusCode);
+                    return null;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
+        }
+
+        public class CardsInputDto
+        {
+            public int UserId { get; set; }
+            public List<string> CardNames { get; set; }
+        }
+
+
+        // public async Task<string> PostCardsToUser(List<string> cardnames, int userId)
+        // {
+        //     try
+        //     {
+        //         string endpoint = $"Mtg/cards/{userId}";
+        //         string[] cardNames = cardnames.ToArray();
+        //         //HttpResponseMessage response = await this.httpClient.PostAsync(endpoint, 
+        //           //await this.httpClient.PostAsync(endpoint, new StringContent(JsonConvert.SerializeObject(cardnames), Encoding.UTF8, "application/json"));
+
+        //         if (response.IsSuccessStatusCode)
+        //         {
+        //             string data = await response.Content.ReadAsStringAsync();
+        //             Console.WriteLine("Succesfully posted cards: " + data);
+        //             return data;
+        //         }
+        //         else
+        //         {
+        //             Console.WriteLine("Error: " + response.StatusCode);
+        //             return null;
+        //         }
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         Console.WriteLine(ex.Message);
+        //         return null;
+        //     }
+        // }
+
 
         //post card to user
         // public async Task<string> PostCardToUser(int userId, string title)
