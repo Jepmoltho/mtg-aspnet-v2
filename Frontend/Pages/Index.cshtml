@@ -8,7 +8,7 @@
 
 <div class="index-body-container">
     <div class="row">
-        <div class="login">
+        <div class="@userId" id="user">
         </div>
         <div class="your-cards-col col-md-3">
             <div class="add-card-by-name">
@@ -22,7 +22,7 @@
             <div class="add-card-by-select">
                 <h4>Selected cards</h4>
                 <div id="selectedCardsList"></div>
-                <button type="button" id="ajax-submit-button" onclick="submitAjaxForm()">Submit ajax</button>
+                <button type="button" id="ajax-submit-button" onclick="submitAjaxForm()">Submit</button>
             </div>
             <h4>Your cards</h4>
             <ul class="owned-cards-list">
@@ -59,22 +59,10 @@
                     </select>
                 </form>
             </div>
-            @if (Model.Cards != null && Model.Cards.Any())
-            {
-                <div class="cards-displayed ">
-                    <form method="post" class="card-container" id="select-cards-form" asp-page-handler="Cards">
-                        @for (int i = 0; i < Model.Cards.Count; i++)
-                        {
-                            <div class="card" key="@Model.Cards[i].Id" onclick="handleCardClick('@Model.Cards[i].Name')">
-                                <img src="@Model.Cards[i].ImageUrl" alt="@Model.Cards[i].Name" />
-                                <p class="card-text">@Model.Cards[i].Name</p>
-                            </div>
-                        }
-                        <input type="hidden" id="selectedCardsInput" name="SelectedCards" />
-                        <button type="button" onclick="submitForm()">Submit</button>
-                    </form>
+            <div class="cards-displayed">
+                <div class="card-container" id="select-cards-form">
                 </div>
-            }
+            </div>
         </div>
     </div>
 </div>
@@ -126,15 +114,33 @@
     .card-text {
         font-size: 1rem;
     }
+
+    .card:hover {
+        cursor: pointer;
+        background-color: #e9ecef;
+    }
+
+    #selectedCardsList>p {
+        margin-bottom: 2px;
+    }
+
+    #selectedCardsList {
+        padding-bottom: 10px;
+    }
 </style>
 
 <script>
 
     function handleDropdownSelection() {
-        var selectedSet = document.getElementById("itemDropdown");
-        var selectedKey = selectedSet.options[selectedSet.selectedIndex].getAttribute("key");
-        //HttpContext.Session.SetString("SelectedSet", selectedKey);
-
+        var selectedSet;
+        var selectedKey;
+        if (document.getElementById("itemDropdown").selectedIndex == 0) {
+            selectedSet = "LEA";
+            selectedKey = "LEA";
+        } else {
+            selectedSet = document.getElementById("itemDropdown");
+            selectedKey = selectedSet.options[selectedSet.selectedIndex].getAttribute("key");
+        }
         console.log("Selected key: " + selectedKey);
         var url = "https://api.magicthegathering.io/v1/cards?set=";
         fetch(url + selectedKey)
@@ -142,16 +148,16 @@
             .then(data => {
                 // Generate HTML for cards
                 var cardHTML = '';
-                //cardHTML += '<form method="post" class="card-container" id="select-cards-form" asp-page-handler="Cards">';
                 data.cards.forEach(function (card) {
                     cardHTML += '<div class="card" key="' + card.id + '" onclick="handleCardClick(\'' + card.name + '\')">';
                     cardHTML += '<img src="' + card.imageUrl + '" alt="' + card.name + '" />';
                     cardHTML += '<p class="card-text">' + card.name + '</p>';
                     cardHTML += '</div>';
                 });
-                cardHTML += '<input type="hidden" id="selectedCardsInput" name="SelectedCards" /> <button type="button" onclick="submitForm()">Submit</button>';
+                cardHTML += '<input type="hidden" id="selectedCardsInput" name="SelectedCards" />';
                 $(".card-container").html(cardHTML);
             });
+
     }
 
     var selectedCards = [];
@@ -166,24 +172,25 @@
         displaySelectedCards();
     }
 
-    function submitForm() {
-        document.getElementById("selectedCardsInput").value = selectedCards.join(",");
-        document.getElementById("select-cards-form").submit();
-    }
-
-
 
     function submitAjaxForm() {
-        var userId = 37;
+
+        var userid;
+        if (document.getElementById("user").classList.length == 0) {
+            userid = 0;
+            window.alert("Please log in to save your cards");
+        } else {
+            userid = document.getElementById("user").classList[0];
+        }
+
         var cardNames = selectedCards;
-        //var cardNames = ["string1", "string2"]; // Replace with your actual card names
 
         var data = {
-            userId: userId,
+            userId: userid,
             cardNames: cardNames
         };
 
-        fetch('https://localhost:5001/Mtg/cards/' + userId, {
+        fetch('https://localhost:5001/Mtg/cards/' + userid, {
             method: 'POST',
             headers: {
                 'Accept': 'text/plain',
@@ -193,16 +200,15 @@
         })
             .then(response => {
                 if (response.ok) {
-                    // Request was successful
-                    return response.text(); // Or response.json() if the server sends JSON data
+                    return response.text();
                 } else {
-                    // Handle the error
                     throw new Error('Request failed with status: ' + response.status);
                 }
             })
             .then(data => {
                 // Handle the response data (if needed)
                 console.log('Response:', data);
+                window.location.reload();
             })
             .catch(error => {
                 // Handle any network or other errors
@@ -223,44 +229,12 @@
     }
 
 
-    @* document.getElementById("submitButton").addEventListener("click", function () {
+    window.onload = handleDropdownSelection();
+
+
+    @* function submitForm() {
         document.getElementById("selectedCardsInput").value = selectedCards.join(",");
         document.getElementById("select-cards-form").submit();
-        }); *@
-
-    @* document.getElementById("ajax-submit-button").addEventListener("click", function () {
-        // Trigger the form submission
-        console.log("goes in ajax")
-        var userId = 37;
-        var data = {
-        userId: userId,
-        selectedCards: ["card1", "card2"]
-        };
-        fetch('https://localhost:5001/Mtg/cards/' + userId, {
-        method: 'POST',
-        headers: {
-        'Accept': 'text/plain',
-        'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-        })
-        .then(response => {
-        if (response.ok) {
-        // Request was successful
-        return response.text(); // Or response.json() if the server sends JSON data
-        } else {
-        // Handle the error
-        console.error('Error:', response.statusText);
-        }
-        })
-        .then(data => {
-        // Handle the response data (if needed)
-        console.log('Response:', data);
-        })
-        .catch(error => {
-        // Handle any network or other errors
-        console.error('Error:', error);
-        });
-        }); *@
+        } *@
 
 </script>

@@ -47,9 +47,7 @@ namespace mtg_aspnet_v2.Pages
         {
             this.Sets = await FetchSets();
             this.OwnedCards = await DisplayOwnedCards();
-            this.Cards = await FetchCardsFromSet(this.CurrSetCode); //2ED
-            //var actionResult = await OnPostCardAsync(37, "Red lotus");
-            //var actionResult = await OnPostCardsAsync();
+            this.Cards = await FetchCardsFromSet(this.CurrSetCode);
         }
 
         public async Task<List<Set>> FetchSets()
@@ -62,10 +60,7 @@ namespace mtg_aspnet_v2.Pages
             {
                 var setsArray = JsonConvert.DeserializeObject<List<Set>>(trimLastSetsData);
                 var setsArrayFiltered = setsArray.Where(s => s.OnlineOnly == false && s.Type == "core" || s.Type == "expansion");
-                //this.Sets = setsArrayFiltered.Select(s => s.Name).ToList();
-                //return (List<Set>)setsArrayFiltered;
                 return setsArray;
-                //return setsArrayFiltered.Select(s => s.Name).ToList();
             }
             else
             {
@@ -140,47 +135,6 @@ namespace mtg_aspnet_v2.Pages
             }
         }
 
-        //post multople cards to user
-        public async Task<IActionResult> OnPostCardsAsync()
-        {
-            // if (this.UserId.HasValue)
-            // {
-            //int userid = (int)this.UserId;
-            //int userid = 37;
-            int userid = (int)HttpContext.Session.GetInt32("UserId");
-            string commaseperatedCards = string.Join(",", this.SelectedCards); //this.SelectedCards.ToString();
-            List<string> cardNames = commaseperatedCards.Split(',').Select(cardname => cardname.Trim()).ToList();
-
-
-            foreach (string cardname in cardNames)
-            {
-                Console.WriteLine(cardname);
-                Console.WriteLine(" ");
-            }
-            //Console.WriteLine(userid + " " + cardNames);
-            if (userid != 0)
-            {
-                try
-                {
-                    var data = await _clientApi.PostCardsToUser(userid, cardNames);
-                    return RedirectToPage("/Index");
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                    return RedirectToPage("/Index");
-                }
-            }
-            else
-            {
-                return null;
-            }
-        }
-        // else
-        // {
-        //     Console.WriteLine("Userid is null");
-        //     return RedirectToPage("/Index");
-        // }
     }
 }
 
@@ -250,88 +204,35 @@ public class Card
     public string Id { get; set; }
 }
 
-
-// public class ForeignName
+//post multiple cards to user
+// public async Task<IActionResult> OnPostCardsAsync()
 // {
-//     public string Name { get; set; }
-//     public string Text { get; set; }
-//     public string Type { get; set; }
-//     public string Flavor { get; set; }
-//     public string ImageUrl { get; set; }
-//     public string Language { get; set; }
-//     public int MultiverseId { get; set; }
-// }
-
-// public class Legality
-// {
-//     public string Format { get; set; }
-//     public string Legality { get; set; }
-// }
+//     int userid = (int)HttpContext.Session.GetInt32("UserId");
+//     string commaseperatedCards = string.Join(",", this.SelectedCards); //this.SelectedCards.ToString();
+//     List<string> cardNames = commaseperatedCards.Split(',').Select(cardname => cardname.Trim()).ToList();
 
 
-// public class SetsResponse
-// {
-//     public List<string> Sets { get; set; }
-// }
-
-
-// public class SetsResponse
-// {
-//     public List<Set> Sets { get; set; }
-// }
-
-// public class Set
-// {
-//     public string Code { get; set; }
-//     public string Name { get; set; }
-//     public string Type { get; set; }
-//     public List<string> Booster { get; set; }
-//     public DateTime ReleaseDate { get; set; }
-//     public string Block { get; set; }
-//     public bool OnlineOnly { get; set; }
-// }
-
-
-
-// //Refactor to own function
-// if (HttpContext.Session.GetInt32("UserId") != null && HttpContext.Session.GetString("UserName") != null)
-// {
-//     this.UserId = HttpContext.Session.GetInt32("UserId"); //(int)HttpContext.Session.GetInt32("UserId");
-//     this.UserName = HttpContext.Session.GetString("UserName");
-//     try
+//     foreach (string cardname in cardNames)
 //     {
-//         string cardsData = await _clientApi.GetCardsByUserId((int)this.UserId);
-//         if (!string.IsNullOrEmpty(cardsData))
+//         Console.WriteLine(cardname);
+//         Console.WriteLine(" ");
+//     }
+//     //Console.WriteLine(userid + " " + cardNames);
+//     if (userid != 0)
+//     {
+//         try
 //         {
-//             //Console.WriteLine(cardsData);
-//             var cardList = JsonConvert.DeserializeObject<List<Card>>(cardsData);
-//             List<string> cardTitles = cardList.Select(c => c.Title).ToList();
-//             this.Cards = cardTitles;
+//             var data = await _clientApi.PostCardsToUser(userid, cardNames);
+//             return RedirectToPage("/Index");
+//         }
+//         catch (Exception ex)
+//         {
+//             Console.WriteLine(ex.Message);
+//             return RedirectToPage("/Index");
 //         }
 //     }
-//     catch (Exception ex)
+//     else
 //     {
-//         Console.WriteLine(ex.Message);
-//     }
-// }
-
-// public void OnGet()
-// {
-//     if (HttpContext.Session.GetInt32("UserId") != null && HttpContext.Session.GetString("UserName") != null)
-//     {
-//         this.UserId = HttpContext.Session.GetInt32("UserId"); //(int)HttpContext.Session.GetInt32("UserId");
-//         this.UserName = HttpContext.Session.GetString("UserName");
-//     }
-// }
-
-// public async Task OnGetAsync()
-// {
-//     User = await _clientApi.GetDataForUser(36);
-
-//     if (User != null)
-//     {
-//         string username = JsonConvert.DeserializeObject<UserResponse>(User).UserName;
-//         Console.WriteLine(username);
-//         this.UserName = username;
+//         return null;
 //     }
 // }

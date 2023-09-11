@@ -88,16 +88,6 @@ namespace Backend.Controllers
         [HttpPost("cards/{userId}")]
         public ActionResult<int> PostCards([FromBody] CardsInputDto input)
         {
-            //splitting the string into an array of strings by comma sepearation
-            string cardnames = input.CardNames.ToString();
-            string[] cardnamesArray = cardnames.Split(',');
-            foreach (string name in cardnamesArray)
-            {
-                Console.WriteLine(name);
-                Console.WriteLine("hej");
-            }
-
-            //string[] cardnamess = input.CardNames.Split(',');
 
             foreach (string cardname in input.CardNames)
             {
