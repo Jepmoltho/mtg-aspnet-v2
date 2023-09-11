@@ -11,24 +11,32 @@
         <div class="login">
         </div>
         <div class="your-cards-col col-md-3">
+            <div class="add-card-by-name">
+                <h4>Add card by name</h4>
+                <form method="post" asp-page-handler="Card">
+                    <input type="text" id="cardName" name="CardName" placeholder="Enter card name" />
+                    <input type="hidden" asp-for="UserId" value="@userId" />
+                    <input type="submit" value="Add Card" />
+                </form>
+            </div>
+            <div class="add-card-by-select">
+                <h4>Selected cards</h4>
+                @* <form method="post" asp-page-handler="Cards">
+                <input type="hidden" asp-for="UserId" value="@userId" />
+                <input type="submit" value="Add Cards" />
+                </form> *@
+            </div>
             <h4>Your cards</h4>
             <ul class="owned-cards-list">
                 @if (!string.IsNullOrEmpty(userName) && Model.OwnedCards != null && Model.OwnedCards.Any())
                 {
-
                     @foreach (var card in Model.OwnedCards)
                     {
                         <li>@card</li>
                     }
-
                 }
             </ul>
-            <h4>Add card by name</h4>
-            <form method="post" asp-page-handler="Card">
-                <input type="text" id="cardName" name="CardName" placeholder="Enter card name" />
-                <input type="hidden" asp-for="UserId" value="@userId" />
-                <input type="submit" value="Add Card" />
-            </form>
+
 
 
 
@@ -47,7 +55,6 @@
                     <label for="itemDropdown">Set: </label>
                     <select id="itemDropdown" onchange="handleDropdownSelection()">
                         <option value="Select set">Select set</option>
-
                         @if (Model.Sets != null && Model.Sets.Any())
                         {
                             @foreach (var setname in Model.Sets)
@@ -58,18 +65,28 @@
                     </select>
                 </form>
             </div>
-            <div class="cards-displayed card-container">
-                @if (Model.Cards != null && Model.Cards.Any())
-                {
-                    @foreach (var card in Model.Cards)
-                    {
-                        <div class="card" key="@card.Id">
-                            <img src="@card.ImageUrl" alt="@card.Name" />
-                            <p class="card-text">@card.Name</p>
-                        </div>
-                    }
-                }
+            @if (Model.Cards != null && Model.Cards.Any())
+            {
+                <div class="cards-displayed card-container">
+                    <form method="post" class=" card-container" id="select-cards-form" asp-page-handler="Cards">
+                        @for (int i = 0; i < Model.Cards.Count; i++)
+                        {
+                            <div class="card" key="@Model.Cards[i].Id" onclick="handleCardClick('@Model.Cards[i].Name')">
+                                <img src="@Model.Cards[i].ImageUrl" alt="@Model.Cards[i].Name" />
+                                <p class="card-text">@Model.Cards[i].Name</p>
+                            </div>
+                        }
+                        <input type="hidden" id="selectedCardsInput" name="SelectedCards" />
+                        <button type="button" onclick="submitForm()">Submit</button>
+                    </form>
+                </div>
+            }
+            @* @foreach (var card in Model.Cards){
+            <div class="card" key="@card.Id" onclick="handleCardClick('@card.Name')">
+            <img src="@card.ImageUrl" alt="@card.Name" />
+            <p class="card-text">@card.Name</p>
             </div>
+            } *@
         </div>
     </div>
 </div>
@@ -80,13 +97,21 @@
         padding-bottom: 40px;
     }
 
+    .add-card-by-name {
+        padding-top: 100px;
+        padding-bottom: 40px;
+    }
+
+
     .owned-cards-list {
         list-style: none;
         padding-left: 2px;
         padding-right: 0;
     }
 
-    .your-cards-col {}
+    .card-selection {
+        padding-bottom: 20px;
+    }
 
     .card-container {
         display: flex;
@@ -132,5 +157,23 @@
                 });
                 $(".cards-displayed").html(cardHTML);
             });
+    }
+
+    var selectedCards = [];
+
+    function handleCardClick(cardName) {
+        //Model.SelectedCards.Add(cardName);
+        if (selectedCards.includes(cardName)) {
+            selectedCards = selectedCards.filter(item => item !== cardName);
+        } else {
+            selectedCards.push(cardName);
+        }
+        console.log(selectedCards);
+    }
+
+    function submitForm() {
+        document.getElementById("selectedCardsInput").value = selectedCards.join(",");
+        //document.getElementById("selectedCardsInput").value
+        document.getElementById("select-cards-form").submit();
     }
 </script>

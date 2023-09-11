@@ -83,9 +83,51 @@ namespace Backend.Controllers
             _context.SaveChanges();
             return Ok(userId);
         }
+
+        //post multiple cards to the same userid
+        [HttpPost("cards/{userId}")]
+        public ActionResult<int> PostCards([FromBody] CardsInputDto input)
+        {
+            //splitting the string into an array of strings by comma sepearation
+            string cardnames = input.CardNames.ToString();
+            string[] cardnamesArray = cardnames.Split(',');
+            foreach (string name in cardnamesArray)
+            {
+                Console.WriteLine(name);
+                Console.WriteLine("hej");
+            }
+
+            //string[] cardnamess = input.CardNames.Split(',');
+
+            foreach (string cardname in input.CardNames)
+            {
+                Console.WriteLine(cardname);
+                _context.Cards.Add(new Card { Title = cardname, UserId = input.UserId });
+            }
+            _context.SaveChanges();
+            return Ok(input.UserId);
+        }
+
+        public class CardsInputDto
+        {
+            public int UserId { get; set; }
+            public List<string> CardNames { get; set; }
+        }
+
     }
 }
 
+//This works
+// [HttpPost("cards/{userId}")]
+// public ActionResult<int> PostCards(string[] cardnames, int userId)
+// {
+//     foreach (string cardname in cardnames)
+//     {
+//         _context.Cards.Add(new Card { Title = cardname, UserId = userId });
+//     }
+//     _context.SaveChanges();
+//     return Ok(userId);
+// }
 
 //    [HttpPost("card/{userId}")]
 //     public ActionResult<int> PostCard(Card card, int userId)

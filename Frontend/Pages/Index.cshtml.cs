@@ -4,6 +4,7 @@ using System.Text.Json;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Mvc;
 using System.Runtime.InteropServices;
+using System.Reflection.Metadata.Ecma335;
 
 
 namespace mtg_aspnet_v2.Pages
@@ -39,12 +40,16 @@ namespace mtg_aspnet_v2.Pages
         [BindProperty]
         public string CardName { get; set; }
 
+        [BindProperty]
+        public List<string> SelectedCards { get; set; } = new List<string>();
+
         public async Task OnGetAsync()
         {
             this.Sets = await FetchSets();
             this.OwnedCards = await DisplayOwnedCards();
             this.Cards = await FetchCardsFromSet(this.CurrSetCode); //2ED
             //var actionResult = await OnPostCardAsync(37, "Red lotus");
+            //var actionResult = await OnPostCardsAsync();
         }
 
         public async Task<List<Set>> FetchSets()
@@ -113,6 +118,8 @@ namespace mtg_aspnet_v2.Pages
             return null;
         }
 
+
+
         public async Task<IActionResult> OnPostCardAsync()
         {
             try
@@ -133,73 +140,116 @@ namespace mtg_aspnet_v2.Pages
             }
         }
 
-        public class UserResponse
+        //post multople cards to user
+        public async Task<IActionResult> OnPostCardsAsync()
         {
-            public int UserId { get; set; }
-            public string UserName { get; set; }
-            public string Password { get; set; }
-            public List<string> Cards { get; set; }
-        }
+            // if (this.UserId.HasValue)
+            // {
+            //int userid = (int)this.UserId;
+            //int userid = 37;
+            int userid = (int)HttpContext.Session.GetInt32("UserId");
+            string commaseperatedCards = string.Join(",", this.SelectedCards); //this.SelectedCards.ToString();
+            List<string> cardNames = commaseperatedCards.Split(',').Select(cardname => cardname.Trim()).ToList();
 
-        public class OwnedCard
-        {
-            public string Title { get; set; }
-        }
 
-        public class Set
-        {
-            public string Code { get; set; }
-            public string Name { get; set; }
-            public string Type { get; set; }
-
-            [JsonIgnore]
-            public List<string> Booster { get; set; }
-            public DateTime ReleaseDate { get; set; }
-            public string Block { get; set; }
-            public bool OnlineOnly { get; set; }
+            foreach (string cardname in cardNames)
+            {
+                Console.WriteLine(cardname);
+                Console.WriteLine(" ");
+            }
+            //Console.WriteLine(userid + " " + cardNames);
+            if (userid != 0)
+            {
+                try
+                {
+                    var data = await _clientApi.PostCardsToUser(userid, cardNames);
+                    return RedirectToPage("/Index");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    return RedirectToPage("/Index");
+                }
+            }
+            else
+            {
+                return null;
+            }
         }
-
-        public class Card
-        {
-            public string Name { get; set; }
-            public string ManaCost { get; set; }
-            [JsonIgnore]
-            public double Cmc { get; set; }
-            [JsonIgnore]
-            public List<string> Colors { get; set; }
-            [JsonIgnore]
-            public List<string> ColorIdentity { get; set; }
-            public string Type { get; set; }
-            [JsonIgnore]
-            public List<string> Types { get; set; }
-            [JsonIgnore]
-            public List<string> Subtypes { get; set; }
-            public string Rarity { get; set; }
-            public string Set { get; set; }
-            public string SetName { get; set; }
-            [JsonIgnore]
-            public string Text { get; set; }
-            [JsonIgnore]
-            public string Artist { get; set; }
-            public string Number { get; set; }
-            public string Power { get; set; }
-            public string Toughness { get; set; }
-            public string Layout { get; set; }
-            public string MultiverseId { get; set; }
-            public string ImageUrl { get; set; }
-            [JsonIgnore]
-            public List<string> Variations { get; set; }
-            [JsonIgnore]
-            public List<string> ForeignNames { get; set; }
-            public List<string> Printings { get; set; }
-            public string OriginalText { get; set; }
-            public string OriginalType { get; set; }
-            [JsonIgnore]
-            public List<string> Legalities { get; set; }
-            public string Id { get; set; }
-        }
+        // else
+        // {
+        //     Console.WriteLine("Userid is null");
+        //     return RedirectToPage("/Index");
+        // }
     }
 }
+
+public class UserResponse
+{
+    public int UserId { get; set; }
+    public string UserName { get; set; }
+    public string Password { get; set; }
+    public List<string> Cards { get; set; }
+}
+
+public class OwnedCard
+{
+    public string Title { get; set; }
+}
+
+public class Set
+{
+    public string Code { get; set; }
+    public string Name { get; set; }
+    public string Type { get; set; }
+
+    [JsonIgnore]
+    public List<string> Booster { get; set; }
+    public DateTime ReleaseDate { get; set; }
+    public string Block { get; set; }
+    public bool OnlineOnly { get; set; }
+}
+
+public class Card
+{
+    public string Name { get; set; }
+    public string ManaCost { get; set; }
+    [JsonIgnore]
+    public double Cmc { get; set; }
+    [JsonIgnore]
+    public List<string> Colors { get; set; }
+    [JsonIgnore]
+    public List<string> ColorIdentity { get; set; }
+    public string Type { get; set; }
+    [JsonIgnore]
+    public List<string> Types { get; set; }
+    [JsonIgnore]
+    public List<string> Subtypes { get; set; }
+    public string Rarity { get; set; }
+    public string Set { get; set; }
+    public string SetName { get; set; }
+    [JsonIgnore]
+    public string Text { get; set; }
+    [JsonIgnore]
+    public string Artist { get; set; }
+    public string Number { get; set; }
+    public string Power { get; set; }
+    public string Toughness { get; set; }
+    public string Layout { get; set; }
+    public string MultiverseId { get; set; }
+    public string ImageUrl { get; set; }
+    [JsonIgnore]
+    public List<string> Variations { get; set; }
+    [JsonIgnore]
+    public List<string> ForeignNames { get; set; }
+    public List<string> Printings { get; set; }
+    public string OriginalText { get; set; }
+    public string OriginalType { get; set; }
+    [JsonIgnore]
+    public List<string> Legalities { get; set; }
+    public string Id { get; set; }
+}
+
 
 // public class ForeignName
 // {
