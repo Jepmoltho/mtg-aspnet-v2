@@ -45,10 +45,8 @@ namespace Frontend.ClientApi
             try
             {
                 string endpoint = $"Mtg/user/login/{username}/{password}";
-                //Console.WriteLine(httpClient.BaseAddress + endpoint);
 
                 HttpResponseMessage response = await this.httpClient.GetAsync(endpoint);
-                //Console.WriteLine(response);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -94,6 +92,64 @@ namespace Frontend.ClientApi
             }
         }
 
+        //get card objects with info
+        // public async Task
+        // public async Task<List<Card>> GetCardObjectsByUserId(int userId)
+        // {
+        //     try
+        //     {
+        //         string endpoint = $"Mtg/cardsfromuser/{userId}";
+        //         HttpResponseMessage response = await this.httpClient.GetAsync(endpoint);
+        //         if (response.IsSuccessStatusCode)
+        //         {
+        //             //List<Card> cards = await response.Content.ReadFromJsonAsync<List<Card>>();
+        //             string cards = await response.Content.ReadAsStringAsync();
+
+        //             //Console.WriteLine(cards);
+
+        //             List<Card> cardsList = JsonConvert.DeserializeObject<List<Card>>(cards);
+
+        //             foreach (Card card in cardsList)
+        //             {
+        //                 Console.WriteLine(card.Title);
+        //                 Console.WriteLine(card.ImgUrl);
+        //                 Console.WriteLine(card.Set);
+        //                 Console.WriteLine(card.Name);
+        //             }
+        //             // foreach (CardWithInfo card in cardsList)
+        //             // {
+        //             //     Console.WriteLine(card.Title);
+        //             //     Console.WriteLine(card.ImgUrl);
+        //             // }
+        //             // Console.WriteLine("Fetching card 3");
+        //             // foreach (Card card in cardsList)
+        //             // {
+        //             //     Console.WriteLine(card.Set);
+        //             //     Console.WriteLine(card.Id);
+        //             // }
+        //             //Console.WriteLine(cards);
+        //             // foreach (Card card in cards)
+        //             // {
+        //             //     Console.WriteLine(card.Name);
+        //             //     Console.WriteLine(card.ImageUrl);
+        //             // }
+        //             //string data = await response.Content.ReadAsStringAsync();
+        //             //Console.WriteLine(data);
+        //             //List<Card> cards = JsonConvert.DeserializeObject<List<Card>>(data);
+        //             return cardsList;
+        //         }
+        //         else
+        //         {
+        //             Console.WriteLine("Error: " + response.StatusCode);
+        //             return null;
+        //         }
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         Console.WriteLine(ex.Message);
+        //         return null;
+        //     }
+        // }
         //post card to user
         public async Task<string> PostCardToUser(int userId, string title)
         {
@@ -156,6 +212,18 @@ namespace Frontend.ClientApi
             public int UserId { get; set; }
             public List<string> CardNames { get; set; }
         }
+
+        public class CardWithInfo
+        {
+            public int CardId { get; set; }
+            public string MtgCardId { get; set; }
+            public string Title { get; set; }
+            public string Set { get; set; }
+            public string SuperType { get; set; }
+            public string ImgUrl { get; set; }
+            public int UserId { get; set; }
+        }
+
 
 
         // public async Task<string> PostCardsToUser(List<string> cardnames, int userId)

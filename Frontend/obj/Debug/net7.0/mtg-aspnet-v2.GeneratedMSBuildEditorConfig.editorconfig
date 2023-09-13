@@ -16,6 +16,10 @@ build_property.GenerateRazorMetadataSourceChecksumAttributes =
 build_property.MSBuildProjectDirectory = c:\Users\jmt.it-minds.dk\Documents\Repos\mtg-aspnet-v2\Frontend
 build_property._RazorSourceGeneratorDebug = 
 
+[c:/Users/jmt.it-minds.dk/Documents/Repos/mtg-aspnet-v2/Frontend/Pages/Deckbuilder.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRGVja2J1aWxkZXIuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [c:/Users/jmt.it-minds.dk/Documents/Repos/mtg-aspnet-v2/Frontend/Pages/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXJyb3IuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 

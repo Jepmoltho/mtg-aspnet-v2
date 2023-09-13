@@ -22,7 +22,9 @@
             <div class="add-card-by-select">
                 <h4>Selected cards</h4>
                 <div id="selectedCardsList"></div>
-                <button type="button" id="ajax-submit-button" onclick="submitAjaxForm()">Submit</button>
+                @* <button type="button" id="ajax-submit-button" onclick="submitAjaxForm()">Submit</button> *@
+                <button type="button" id="ajax-submit-button-with-info"
+                    onclick="submitAjaxFormWithInfo()">Submit</button>
             </div>
             <h4>Your cards</h4>
             <ul class="owned-cards-list">
@@ -149,7 +151,8 @@
                 // Generate HTML for cards
                 var cardHTML = '';
                 data.cards.forEach(function (card) {
-                    cardHTML += '<div class="card" key="' + card.id + '" onclick="handleCardClick(\'' + card.name + '\')">';
+                    //cardHTML += '<div class="card" key="' + card.id + '" onclick="handleCardClick(\'' + card.name + '\')">';
+                    cardHTML += '<div class="card" key="' + card.id + '" onclick="handleCardClickWithInfo(\'' + card.name + '\',\'' + card.id + '\',\'' + card.set + '\',\'' + card.supertypes + '\',\'' + card.imageUrl + '\')">';
                     cardHTML += '<img src="' + card.imageUrl + '" alt="' + card.name + '" />';
                     cardHTML += '<p class="card-text">' + card.name + '</p>';
                     cardHTML += '</div>';
@@ -216,6 +219,77 @@
             });
     }
 
+    var selectedCardsWithInfo = [];
+
+    function handleCardClickWithInfo(cardName, cardMtgId, set, superType, imgUrl) {
+        if (selectedCards.includes(cardName)) {
+            selectedCardsWithInfo = selectedCards.filter(item => item !== cardName);
+        } else {
+            selectedCardsWithInfo.push({ cardName, cardMtgId, set, superType, imgUrl });
+        }
+        console.log(selectedCardsWithInfo);
+        //displaySelectedCards();
+        displaySelectedCardWithInfo();
+
+    }
+
+    function submitAjaxFormWithInfo() {
+        var userid;
+        if (document.getElementById("user").classList.length == 0) {
+            userid = 0;
+            window.alert("Please log in to save your cards");
+        } else {
+            userid = document.getElementById("user").classList[0];
+        }
+
+        var cardObjects = selectedCardsWithInfo.map(card => {
+            return {
+                mtgCardId: card.cardMtgId,
+                title: card.cardName,
+                set: card.set,
+                superType: card.superType,
+                imgUrl: card.imgUrl,
+                userId: userid
+            };
+        });
+
+        console.log(cardObjects);
+
+        var data = {
+            userId: userid,
+            cards: cardObjects
+        };
+
+        fetch('https://localhost:5001/Mtg/cardswithinfo/' + userid, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.json(); // Assuming the server returns JSON
+                } else {
+                    throw new Error('Request failed with status: ' + response.status);
+                }
+            })
+            .then(data => {
+                // Handle the response data (if needed)
+                console.log('Response:', data);
+                window.location.reload();
+            })
+            .catch(error => {
+                // Handle any network or other errors
+                console.error('Error:', error);
+            });
+    }
+
+
+
+
+    // Display selected cards
     function displaySelectedCards() {
         var selectedCardsList = document.getElementById('selectedCardsList');
         if (selectedCardsList) {
@@ -223,6 +297,18 @@
             selectedCards.forEach(function (card) {
                 var cardElement = document.createElement('p');
                 cardElement.textContent = card;
+                selectedCardsList.appendChild(cardElement);
+            });
+        }
+    }
+
+    function displaySelectedCardWithInfo() {
+        var selectedCardsList = document.getElementById('selectedCardsList');
+        if (selectedCardsList) {
+            selectedCardsList.innerHTML = ''; // Clear previous content
+            selectedCardsWithInfo.forEach(function (card) {
+                var cardElement = document.createElement('p');
+                cardElement.textContent = card.cardName;
                 selectedCardsList.appendChild(cardElement);
             });
         }
