@@ -55,7 +55,6 @@ namespace mtg_aspnet_v2.Pages
             string setsData = await _mtgApi.GetSetsFromMtgApi();
             string trimFirstSetsData = setsData.Replace("{\"sets\":", "");
             string trimLastSetsData = trimFirstSetsData.Remove(trimFirstSetsData.Length - 1);
-            //Console.WriteLine(trimLastSetsData);
             if (!string.IsNullOrEmpty(setsData))
             {
                 var setsArray = JsonConvert.DeserializeObject<List<Set>>(trimLastSetsData);
@@ -202,6 +201,13 @@ public class Card
     [JsonIgnore]
     public List<string> Legalities { get; set; }
     public string Id { get; set; }
+
+    //from here
+    public string Title { get; set; }
+    public string UserId { get; set; }
+    public string MtgCardId { get; set; }
+    public string SuperType { get; set; }
+    public string ImgUrl { get; set; }
 }
 
 //post multiple cards to user

@@ -1,0 +1,126 @@
+@page
+@model DeckbuilderModel
+@{
+    ViewData["Title"] = "Deckbuilder";
+    string? userName = HttpContext.Session.GetString("UserName");
+    int? userId = HttpContext.Session.GetInt32("UserId");
+}
+
+<div class="index-body-container">
+    <div class="row">
+        <div class="@userId" id="user">
+        </div>
+        <div class="your-cards-col col-md-3">
+            <div class="add-card-by-name">
+                <h4>Commander</h4>
+                <form method="post">
+                    <input type="text" name="Commander" id="Commander" placeholder="Commander name" />
+                    <input type="submit" value="Add" />
+                </form>
+            </div>
+            <div class="add-card-by-select">
+                <h4>Deck</h4>
+                <i><label>Commander</label></i>
+                <p>@Model.Commander</p>
+                <i><label>Cards</label></i>
+            </div>
+
+            @* <h4>Your cards</h4>
+            <ul class="owned-cards-list">
+            </ul> *@
+        </div>
+        <div class="col-md-9 text-center">
+            @if (!string.IsNullOrEmpty(userName))
+            {
+                <h2>Hi @userName, Select a commander to build your deck from</h2>
+            }
+            else
+            {
+                <h2>Please login to build decks</h2>
+            }
+            <div class="card-selection">
+                @* HERE *@
+            </div>
+            <div class="cards-displayed">
+                <h2>You avaliable cards</h2>
+                <div class="card-container">
+
+                    @if (Model.Cards != null && Model.Cards.Any())
+                    {
+                        @foreach (var card in Model.Cards)
+                        {
+                            <div class="card" onclick="handleCardClick('@card.Title')">
+                                <img src="@card.ImgUrl" alt="@card.Title" />
+                                <p class="card-text">@card.Title</p>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .index-body-container {
+        padding-top: 40px;
+        padding-bottom: 40px;
+    }
+
+    .add-card-by-name {
+        padding-top: 100px;
+        padding-bottom: 40px;
+    }
+
+    .add-card-by-select {
+        padding-bottom: 40px;
+    }
+
+
+    .owned-cards-list {
+        list-style: none;
+        padding-left: 2px;
+        padding-right: 0;
+    }
+
+    .card-selection {
+        padding-bottom: 20px;
+    }
+
+    .card-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .card {
+        max-width: min-content;
+        padding: 1rem;
+        background-color: inherit;
+        border: none;
+    }
+
+    img {
+        border-radius: 12px;
+        width: 226px;
+        height: 311px;
+    }
+
+    .card-text {
+        font-size: 1rem;
+    }
+
+    .card:hover {
+        cursor: pointer;
+        background-color: #e9ecef;
+    }
+
+    #selectedCardsList>p {
+        margin-bottom: 2px;
+    }
+
+    #selectedCardsList {
+        padding-bottom: 10px;
+    }
+</style>

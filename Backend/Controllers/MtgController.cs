@@ -98,10 +98,28 @@ namespace Backend.Controllers
             return Ok(input.UserId);
         }
 
+        //post multiple cards to the same userid
+        [HttpPost("cardswithinfo/{userId}")]
+        public ActionResult<int> PostCardsWithInfo([FromBody] CardsInfo cardsInfo)
+        {
+            foreach (Card card in cardsInfo.Cards)
+            {
+                _context.Cards.Add(new Card { Title = card.Title, UserId = cardsInfo.UserId, MtgCardId = card.MtgCardId, Set = card.Set, SuperType = card.SuperType, imgUrl = card.imgUrl });
+            }
+            _context.SaveChanges();
+            return Ok(cardsInfo.UserId);
+        }
+
         public class CardsInputDto
         {
             public int UserId { get; set; }
             public List<string> CardNames { get; set; }
+        }
+
+        public class CardsInfo
+        {
+            public int UserId { get; set; }
+            public List<Card> Cards { get; set; }
         }
 
     }
