@@ -14,7 +14,11 @@ namespace mtg_aspnet_v2.Pages
         public string Commander { get; set; }
         public string DeckName { get; set; }
 
+        public List<CardWithInfo> Commanders { get; set; }
+
         public List<CardWithInfo> Cards { get; set; }
+
+
 
         public DeckbuilderModel()
         {
@@ -31,11 +35,27 @@ namespace mtg_aspnet_v2.Pages
                 this.UserName = HttpContext.Session.GetString("UserName");
             }
             this.Cards = await FetchCardsForUser(this.UserId);
+            this.Commanders = await FetchCommandersForUser(this.UserId);
         }
 
         public void OnPost()
         {
             this.Commander = Request.Form["Commander"];
+        }
+
+        public async Task<List<CardWithInfo>> FetchCommandersForUser(int userId)
+        {
+            try
+            {
+                string commanderData = await _clientApi.GetCommandersByUserId(userId);
+                List<CardWithInfo> commanders = JsonConvert.DeserializeObject<List<CardWithInfo>>(commanderData);
+                return commanders;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
+            }
         }
 
         public async Task<List<CardWithInfo>> FetchCardsForUser(int userId)

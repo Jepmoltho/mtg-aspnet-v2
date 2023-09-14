@@ -19,10 +19,17 @@
                 </form>
             </div>
             <div class="add-card-by-select">
-                <h4>Deck</h4>
+                <div class="create-deck-container">
+                    <h4>Deck</h4>
+                </div>
                 <i><label>Commander</label></i>
-                <p>@Model.Commander</p>
+                <p id="clicked-commander"></p>
+                <br />
+                @* <p>@Model.Commander</p> *@
                 <i><label>Cards</label></i>
+                <form type="post" class="Create-deck-btn"><input type="submit" value="Create Deck"
+                        onclick="handleCreateDeckClick()"></input></form>
+
             </div>
 
             @* <h4>Your cards</h4>
@@ -32,14 +39,24 @@
         <div class="col-md-9 text-center">
             @if (!string.IsNullOrEmpty(userName))
             {
-                <h2>Hi @userName, Select a commander to build your deck from</h2>
+                <h2>Select a commander to build your deck from</h2>
             }
             else
             {
                 <h2>Please login to build decks</h2>
             }
-            <div class="card-selection">
+            <div class="commander-container">
                 @* HERE *@
+                @if (Model.Commanders != null && Model.Cards.Any())
+                {
+                    @foreach (var commander in Model.Commanders)
+                    {
+                        <div class="card" onclick="handlerCommanderClick('@commander.Title')">
+                            <img src="@commander.ImgUrl" alt="@commander.Title" />
+                            <p class="card-text">@commander.Title</p>
+                        </div>
+                    }
+                }
             </div>
             <div class="cards-displayed">
                 <h2>You avaliable cards</h2>
@@ -49,7 +66,7 @@
                     {
                         @foreach (var card in Model.Cards)
                         {
-                            <div class="card" onclick="handleCardClick('@card.Title')">
+                            <div class="card" onclick="">
                                 <img src="@card.ImgUrl" alt="@card.Title" />
                                 <p class="card-text">@card.Title</p>
                             </div>
@@ -63,7 +80,7 @@
 
 <style>
     .index-body-container {
-        padding-top: 40px;
+        padding-top: 60px;
         padding-bottom: 40px;
     }
 
@@ -92,6 +109,7 @@
         flex-wrap: wrap;
         justify-content: center;
         align-items: center;
+
     }
 
     .card {
@@ -123,4 +141,41 @@
     #selectedCardsList {
         padding-bottom: 10px;
     }
+
+    .cards-displayed {
+        padding-top: 60px;
+    }
+
+    .commander-container {
+        padding-top: 60px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .create-deck-container>* {
+        display: inline;
+    }
+
+    .Create-deck-btn {
+        /* place right in the container*/
+        float: right;
+        padding-right: 68px;
+    }
 </style>
+
+<script>
+
+    function handlerCommanderClick(name) {
+        var clickedCommanderDisplay = document.getElementById("clicked-commander");
+        clickedCommanderDisplay.innerText = name;
+    }
+
+    function handleCreateDeckClick() {
+        if (document.getElementById("clicked-commander").innerText == "") {
+            alert("Please select a commander");
+            return;
+        }
+    }
+</script>

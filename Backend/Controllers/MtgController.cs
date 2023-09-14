@@ -1,4 +1,5 @@
 //Import packages (libraries of methods) to use in your controller  
+using System.IO.Compression;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -91,7 +92,6 @@ namespace Backend.Controllers
 
             foreach (string cardname in input.CardNames)
             {
-                Console.WriteLine(cardname);
                 _context.Cards.Add(new Card { Title = cardname, UserId = input.UserId });
             }
             _context.SaveChanges();
@@ -108,6 +108,15 @@ namespace Backend.Controllers
             }
             _context.SaveChanges();
             return Ok(cardsInfo.UserId);
+        }
+
+        [HttpGet("commanders/{userId}")]
+        public ActionResult<IEnumerable<Card>> GetCommandersFromUser(int userId)
+        {
+            var commanders = from c in _context.Cards
+                             where c.UserId == userId && c.SuperType == "Legendary"
+                             select c;
+            return Ok(commanders);
         }
 
         public class CardsInputDto

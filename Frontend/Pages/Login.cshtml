@@ -6,8 +6,7 @@
 @model mtg_aspnet.Pages.LoginModel
 
 
-
-<div class="login-container">
+<div class="login">
     @{
         if (!string.IsNullOrEmpty(username))
         {
@@ -15,33 +14,67 @@
         }
         else
         {
-            <h2>Please login</h2>
+            <h2>Login</h2>
         }
     }
-    <form method="post" asp-page-handler="Login">
-        <div class="form-group">
-            <label for="username">Username</label>
-            <input type="text" class="form-control" asp-for="Username" />
-        </div>
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" class="form-control" asp-for="Password" />
-        </div>
-        <button type="submit" class="login-btn btn btn-primary">Login</button>
-    </form>
-</div>
+    <div class="login-container">
+        <form method="post" asp-page-handler="Login">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" class="form-control" asp-for="Username" />
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" asp-for="Password" />
+            </div>
+            <button type="submit" class="login-btn btn btn-primary">Login</button>
+        </form>
+        <br />
+        <form method="post" asp-page-handler="Logout" class="logout-btn">
+            <button type="submit" class="logout-btn btn red btn-secondary">Logout</button>
+        </form>
 
-<style>
-    .form-group {
-        padding-bottom: 20px;
-    }
+    </div>
+    <br />
+    <br />
+    @* @{
+    if (string.IsNullOrEmpty(username))
+    { *@
+    <h2>Create User</h2>
+    <div class="create-user-container">
+        <form method="post" asp-page-handler="Register">
+            <div class="form-group">
+                <label for="newUsername">Username</label>
+                <input type="text" class="form-control" asp-for="NewUsername" />
+            </div>
+            <div class="form-group">
+                <label for="NewPassword">Password</label>
+                <input type="password" class="form-control" asp-for="NewPassword" />
+            </div>
+            <button type="submit" class="create-user-btn btn btn-primary">Create User</button>
+        </form>
+    </div>
+    @* }
+    } *@
 
-    .logged-in-text {
-        padding-bottom: 20px;
-        margin-bottom: 0px;
-    }
+    <style>
+        .form-group {
+            padding-bottom: 20px;
+        }
 
-    .login-container {
-        padding-top: 40px;
-    }
-</style>
+        .logged-in-text {
+            padding-bottom: 20px;
+            margin-bottom: 0px;
+        }
+
+        .login {
+            padding-bottom: 40px;
+            padding-top: 60px;
+        }
+
+        .login-btn {
+            margin-right: 10px;
+            width: 76px;
+            padding-right: 10px;
+        }
+    </style>
