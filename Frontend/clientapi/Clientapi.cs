@@ -15,6 +15,45 @@ namespace Frontend.ClientApi
             this.httpClient.BaseAddress = new Uri("https://localhost:5001/");
         }
 
+
+        //post a user using this method
+        //         curl -X 'POST' \
+        //   'https://localhost:5001/Mtg/user' \
+        //   -H 'accept: text/plain' \
+        //   -H 'Content-Type: application/json' \
+        //   -d '{
+        //   "userId": 0,
+        //   "userName": "Hus",
+        //   "password": "Hans"
+        // }'
+        // Request URL
+        // https://localhost:5001/Mtg/user
+        public async Task<string> PostUser(string username, string password)
+        {
+            try
+            {
+                string endpoint = $"Mtg/user";
+                HttpResponseMessage response = await this.httpClient.PostAsync(endpoint, new StringContent(JsonConvert.SerializeObject(new UserDto { UserName = username, Password = password }), Encoding.UTF8, "application/json"));
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string data = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine("Succesfully posted user: " + data);
+                    return username;
+                }
+                else
+                {
+                    Console.WriteLine("Error: " + response.StatusCode);
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
+        }
+
         public async Task<string> GetDataForUser(int userId)
         {
             try
@@ -91,6 +130,32 @@ namespace Frontend.ClientApi
                 return null;
             }
         }
+
+        public async Task<string> GetCommandersByUserId(int userId)
+        {
+            try
+            {
+                string endpoint = $"Mtg/commanders/{userId}";
+                HttpResponseMessage response = await this.httpClient.GetAsync(endpoint);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string data = await response.Content.ReadAsStringAsync();
+                    return data;
+                }
+                else
+                {
+                    Console.WriteLine("Error: " + response.StatusCode);
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
+        }
+
 
         //get card objects with info
         // public async Task
@@ -222,6 +287,12 @@ namespace Frontend.ClientApi
             public string SuperType { get; set; }
             public string ImgUrl { get; set; }
             public int UserId { get; set; }
+        }
+
+        public class UserDto
+        {
+            public string UserName { get; set; }
+            public string Password { get; set; }
         }
 
 

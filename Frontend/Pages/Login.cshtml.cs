@@ -14,8 +14,10 @@ namespace mtg_aspnet.Pages
         [BindProperty]
         public string Password { get; set; }
 
-        //test
-        public string Usernametest { get; set; }
+        [BindProperty]
+        public string NewUsername { get; set; }
+        [BindProperty]
+        public string NewPassword { get; set; }
 
         public LoginModel()
         {
@@ -31,6 +33,48 @@ namespace mtg_aspnet.Pages
 
                 string userData = await _clientApi.GetUserByUsernameAndPassword(username, password);
 
+                if (!string.IsNullOrEmpty(userData))
+                {
+                    string userName = JsonConvert.DeserializeObject<UserResponse>(userData).UserName;
+                    int userId = JsonConvert.DeserializeObject<UserResponse>(userData).UserId;
+                    HttpContext.Session.SetInt32("UserId", userId);
+                    HttpContext.Session.SetString("UserName", userName);
+                    Console.WriteLine("Success! " + userName + " logged in");
+
+                    return RedirectToPage("/Index");  //return Page();
+                }
+                else
+                {
+                    Console.WriteLine("Failed to login!");
+                    return RedirectToPage("/Login");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return RedirectToPage("/Login");
+            }
+        }
+
+        public async Task<IActionResult> OnPostLogoutAsync()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToPage("/Login");
+        }
+
+        public async Task<IActionResult> OnPostRegisterAsync()
+        {
+            Console.WriteLine("Registering!");
+
+            try
+            {
+                Console.WriteLine("Registering user!");
+                string username = this.NewUsername;
+                string password = this.NewPassword;
+                Console.WriteLine("Registering user: " + username + " with password: " + password);
+                string userData = await _clientApi.PostUser(username, password);
+                Console.WriteLine(userData);
                 if (!string.IsNullOrEmpty(userData))
                 {
                     string userName = JsonConvert.DeserializeObject<UserResponse>(userData).UserName;

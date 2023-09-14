@@ -1,0 +1,11 @@
+Select Commander from Deck Builder 
+    -> Filter by owned card == SuperType "legendary"
+    -> Keep focus onEF framework: So implement the method on backend side and use Linq to filter on legendary
+
+Logout
+
+Use the object defined in the clientAPI to send post requests to the server. If the obbject is of type HttpWhatever, is sjould be able to do the same as a custom ajax call 
+
+Save a deck in deck builder 
+
+Integrate AI

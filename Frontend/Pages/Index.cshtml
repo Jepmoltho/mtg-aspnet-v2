@@ -11,6 +11,22 @@
         <div class="@userId" id="user">
         </div>
         <div class="your-cards-col col-md-3">
+            <div class="set-select-container">
+                <h4>Filter by set</h4>
+                <form>
+                    @* <label for="itemDropdown">Set: </label> *@
+                    <select id="itemDropdown" onchange="handleDropdownSelection()">
+                        <option value="Select set">Select set</option>
+                        @if (Model.Sets != null && Model.Sets.Any())
+                        {
+                            @foreach (var setname in Model.Sets)
+                            {
+                                <option value="@setname.Name" key="@setname.Code">@setname.Name</option>
+                            }
+                        }
+                    </select>
+                </form>
+            </div>
             <div class="add-card-by-name">
                 <h4>Add card by name</h4>
                 <form method="post" asp-page-handler="Card">
@@ -46,21 +62,6 @@
             {
                 <h2>Select your cards</h2>
             }
-            <div class="card-selection">
-                <form>
-                    <label for="itemDropdown">Set: </label>
-                    <select id="itemDropdown" onchange="handleDropdownSelection()">
-                        <option value="Select set">Select set</option>
-                        @if (Model.Sets != null && Model.Sets.Any())
-                        {
-                            @foreach (var setname in Model.Sets)
-                            {
-                                <option value="@setname.Name" key="@setname.Code">@setname.Name</option>
-                            }
-                        }
-                    </select>
-                </form>
-            </div>
             <div class="cards-displayed">
                 <div class="card-container" id="select-cards-form">
                 </div>
@@ -71,12 +72,11 @@
 
 <style>
     .index-body-container {
-        padding-top: 40px;
+        padding-top: 60px;
         padding-bottom: 40px;
     }
 
     .add-card-by-name {
-        padding-top: 100px;
         padding-bottom: 40px;
     }
 
@@ -128,6 +128,21 @@
 
     #selectedCardsList {
         padding-bottom: 10px;
+    }
+
+    .set-select-container {
+        padding-top: 100px;
+        padding-bottom: 40px;
+        padding-right: 28px;
+    }
+
+    #itemDropdown {
+        /*Define that max width can be no wider than parent container*/
+        max-width: 100%;
+    }
+
+    .cards-displayed {
+        padding-top: 60px;
     }
 </style>
 

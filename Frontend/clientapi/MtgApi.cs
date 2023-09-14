@@ -41,7 +41,6 @@ namespace Frontend.ClientApi
             try
             {
                 string endpoint = $"cards?set={setCode}";
-                Console.WriteLine(httpClient.BaseAddress + endpoint);
                 HttpResponseMessage response = await this.httpClient.GetAsync(endpoint);
 
                 if (response.IsSuccessStatusCode)
