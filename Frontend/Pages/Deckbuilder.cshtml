@@ -25,16 +25,13 @@
                 <i><label>Commander</label></i>
                 <p id="clicked-commander"></p>
                 <br />
-                @* <p>@Model.Commander</p> *@
                 <i><label>Cards</label></i>
+                <button onclick="sendDeckToOpenApi()">Send deck to OpenAI</button>
                 <form type="post" class="Create-deck-btn"><input type="submit" value="Create Deck"
-                        onclick="handleCreateDeckClick()"></input></form>
+                        onclick="handleCreateDeckClick()"></input>
+                </form>
 
             </div>
-
-            @* <h4>Your cards</h4>
-            <ul class="owned-cards-list">
-            </ul> *@
         </div>
         <div class="col-md-9 text-center">
             @if (!string.IsNullOrEmpty(userName))
@@ -46,8 +43,7 @@
                 <h2>Please login to build decks</h2>
             }
             <div class="commander-container">
-                @* HERE *@
-                @if (Model.Commanders != null && Model.Cards.Any())
+                @if (Model.Commanders != null)
                 {
                     @foreach (var commander in Model.Commanders)
                     {
@@ -177,5 +173,38 @@
             alert("Please select a commander");
             return;
         }
+    }
+
+    function sendDeckToOpenApi() {
+        const apiKey = "";
+        const apiUrl = 'https://api.openai.com/v1/engines/davinci/completions';
+
+        // Example prompt
+        const prompt = 'What is the plot of star wars';
+
+        // Data to send to the API
+        const data = {
+            prompt,
+            max_tokens: 50, // Adjust this based on your desired response length
+        };
+
+        fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+            },
+            body: JSON.stringify(data),
+        })
+            .then(response => response.json())
+            .then(result => {
+                // Handle the API response here
+    @* console.log(result); *@
+                    console.log(result.choices[0].text);
+            })
+            .catch(error => {
+                // Handle errors
+                console.error(error);
+            });
     }
 </script>

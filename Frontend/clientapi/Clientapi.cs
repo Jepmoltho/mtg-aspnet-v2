@@ -16,30 +16,17 @@ namespace Frontend.ClientApi
         }
 
 
-        //post a user using this method
-        //         curl -X 'POST' \
-        //   'https://localhost:5001/Mtg/user' \
-        //   -H 'accept: text/plain' \
-        //   -H 'Content-Type: application/json' \
-        //   -d '{
-        //   "userId": 0,
-        //   "userName": "Hus",
-        //   "password": "Hans"
-        // }'
-        // Request URL
-        // https://localhost:5001/Mtg/user
-        public async Task<string> PostUser(string username, string password)
+        public async Task<string?> PostUser(string username, string password)
         {
             try
             {
                 string endpoint = $"Mtg/user";
-                HttpResponseMessage response = await this.httpClient.PostAsync(endpoint, new StringContent(JsonConvert.SerializeObject(new UserDto { UserName = username, Password = password }), Encoding.UTF8, "application/json"));
-
+                UserDto userDto = new UserDto(username, password);
+                HttpResponseMessage response = await this.httpClient.PostAsync(endpoint, new StringContent(JsonConvert.SerializeObject(userDto), Encoding.UTF8, "application/json"));
                 if (response.IsSuccessStatusCode)
                 {
                     string data = await response.Content.ReadAsStringAsync();
-                    Console.WriteLine("Succesfully posted user: " + data);
-                    return username;
+                    return data;
                 }
                 else
                 {
@@ -54,7 +41,7 @@ namespace Frontend.ClientApi
             }
         }
 
-        public async Task<string> GetDataForUser(int userId)
+        public async Task<string?> GetDataForUser(int userId)
         {
             try
             {
@@ -79,7 +66,7 @@ namespace Frontend.ClientApi
             }
         }
 
-        public async Task<string> GetUserByUsernameAndPassword(string username, string password)
+        public async Task<string?> GetUserByUsernameAndPassword(string username, string password)
         {
             try
             {
@@ -105,7 +92,7 @@ namespace Frontend.ClientApi
             }
         }
 
-        public async Task<string> GetCardsByUserId(int userId)
+        public async Task<string?> GetCardsByUserId(int userId)
         {
             try
             {
@@ -131,7 +118,7 @@ namespace Frontend.ClientApi
             }
         }
 
-        public async Task<string> GetCommandersByUserId(int userId)
+        public async Task<string?> GetCommandersByUserId(int userId)
         {
             try
             {
@@ -156,6 +143,111 @@ namespace Frontend.ClientApi
             }
         }
 
+
+        public async Task<string?> PostCardToUser(int userId, string title)
+        {
+            try
+            {
+                string endpoint = $"Mtg/card/{title}/{userId}";
+                HttpResponseMessage response = await this.httpClient.PostAsync(endpoint, new StringContent(title, Encoding.UTF8, "application/json"));
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string data = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine("Succesfully posted card: " + data);
+                    return data;
+                }
+                else
+                {
+                    Console.WriteLine("Error: " + response.StatusCode);
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
+        }
+
+        public async Task<string?> PostCardsToUser(int userId, List<string> cardNames)
+        {
+            try
+            {
+                CardsInputDto cards = new CardsInputDto(userId, cardNames);
+                var jsonContent = JsonConvert.SerializeObject(cards);
+
+                HttpResponseMessage response = await this.httpClient.PostAsync($"Mtg/cards/{userId}", new StringContent(jsonContent, Encoding.UTF8, "application/json"));
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string data = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine("Succesfully posted cards: " + data);
+                    return data;
+                }
+                else
+                {
+                    Console.WriteLine("Error: " + response.StatusCode);
+                    return null;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
+        }
+
+        public class CardsInputDto
+        {
+            public CardsInputDto(int userId, List<string> cardNames)
+            {
+                this.UserId = userId;
+                this.CardNames = cardNames;
+            }
+            public int UserId { get; set; }
+            public List<string> CardNames { get; set; }
+        }
+
+
+        public class UserDto
+        {
+            public string UserName { get; set; }
+            public string Password { get; set; }
+
+            public UserDto(string username, string password)
+            {
+                this.UserName = username;
+                this.Password = password;
+            }
+        }
+
+
+        // public class CardWithInfo
+        // {
+
+        //     public int CardId { get; set; }
+        //     public string MtgCardId { get; set; }
+        //     public string Title { get; set; }
+        //     public string Set { get; set; }
+        //     public string SuperType { get; set; }
+        //     public string ImgUrl { get; set; }
+        //     public int UserId { get; set; }
+        // }
+
+        //post a user using this method
+        //         curl -X 'POST' \
+        //   'https://localhost:5001/Mtg/user' \
+        //   -H 'accept: text/plain' \
+        //   -H 'Content-Type: application/json' \
+        //   -d '{
+        //   "userId": 0,
+        //   "userName": "Hus",
+        //   "password": "Hans"
+        // }'
+        // Request URL
+        // https://localhost:5001/Mtg/user
 
         //get card objects with info
         // public async Task
@@ -216,86 +308,6 @@ namespace Frontend.ClientApi
         //     }
         // }
         //post card to user
-        public async Task<string> PostCardToUser(int userId, string title)
-        {
-            try
-            {
-                //https://localhost:5001/Mtg/card/Black%20lotus/28
-                string endpoint = $"Mtg/card/{title}/{userId}";
-                HttpResponseMessage response = await this.httpClient.PostAsync(endpoint, new StringContent(title, Encoding.UTF8, "application/json"));
-
-                if (response.IsSuccessStatusCode)
-                {
-                    string data = await response.Content.ReadAsStringAsync();
-                    Console.WriteLine("Succesfully posted card: " + data);
-                    return data;
-                }
-                else
-                {
-                    Console.WriteLine("Error: " + response.StatusCode);
-                    return null;
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return null;
-            }
-        }
-
-        public async Task<string> PostCardsToUser(int userId, List<string> cardNames)
-        {
-            try
-            {
-                var cardInputDto = new CardsInputDto { UserId = userId, CardNames = cardNames };
-                var jsonContent = JsonConvert.SerializeObject(cardInputDto);
-
-                HttpResponseMessage response = await this.httpClient.PostAsync($"Mtg/cards/{userId}", new StringContent(jsonContent, Encoding.UTF8, "application/json"));
-
-                if (response.IsSuccessStatusCode)
-                {
-                    string data = await response.Content.ReadAsStringAsync();
-                    Console.WriteLine("Succesfully posted cards: " + data);
-                    return data;
-                }
-                else
-                {
-                    Console.WriteLine("Error: " + response.StatusCode);
-                    return null;
-                }
-
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return null;
-            }
-        }
-
-        public class CardsInputDto
-        {
-            public int UserId { get; set; }
-            public List<string> CardNames { get; set; }
-        }
-
-        public class CardWithInfo
-        {
-            public int CardId { get; set; }
-            public string MtgCardId { get; set; }
-            public string Title { get; set; }
-            public string Set { get; set; }
-            public string SuperType { get; set; }
-            public string ImgUrl { get; set; }
-            public int UserId { get; set; }
-        }
-
-        public class UserDto
-        {
-            public string UserName { get; set; }
-            public string Password { get; set; }
-        }
-
-
 
         // public async Task<string> PostCardsToUser(List<string> cardnames, int userId)
         // {

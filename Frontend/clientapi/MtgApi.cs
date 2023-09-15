@@ -3,20 +3,20 @@ namespace Frontend.ClientApi
 {
     public class MtgApi
     {
-        private readonly HttpClient httpClient;
+        private readonly HttpClient _httpClient;
 
-        public MtgApi()
+        public MtgApi(HttpClient httpClient)
         {
-            this.httpClient = new HttpClient();
-            this.httpClient.BaseAddress = new Uri("https://api.magicthegathering.io/v1/");
+            this._httpClient = httpClient; //new HttpClient();
+            this._httpClient.BaseAddress = new Uri("https://api.magicthegathering.io/v1/");
         }
 
-        public async Task<string> GetSetsFromMtgApi()
+        public async Task<string?> GetSetsFromMtgApi()
         {
             try
             {
                 string endpoint = $"sets";
-                HttpResponseMessage response = await this.httpClient.GetAsync(endpoint);
+                HttpResponseMessage response = await this._httpClient.GetAsync(endpoint);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -36,12 +36,12 @@ namespace Frontend.ClientApi
             }
         }
 
-        public async Task<string> GetCardsFromSetMtgApi(string setCode)
+        public async Task<string?> GetCardsFromSetMtgApi(string setCode)
         {
             try
             {
                 string endpoint = $"cards?set={setCode}";
-                HttpResponseMessage response = await this.httpClient.GetAsync(endpoint);
+                HttpResponseMessage response = await this._httpClient.GetAsync(endpoint);
 
                 if (response.IsSuccessStatusCode)
                 {

@@ -9,13 +9,13 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = Backend
 build_property.RootNamespace = Backend
-build_property.ProjectDir = c:\Users\jmt.it-minds.dk\Documents\Repos\mtg-aspnet-v2\Backend\
+build_property.ProjectDir = C:\Users\jmt.it-minds.dk\Documents\Repos\mtg-aspnet-v2\Backend\
 build_property.RazorLangVersion = 7.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = c:\Users\jmt.it-minds.dk\Documents\Repos\mtg-aspnet-v2\Backend
+build_property.MSBuildProjectDirectory = C:\Users\jmt.it-minds.dk\Documents\Repos\mtg-aspnet-v2\Backend
 build_property._RazorSourceGeneratorDebug = 
 
-[c:/Users/jmt.it-minds.dk/Documents/Repos/mtg-aspnet-v2/Backend/Backups/Notes.cshtml]
+[C:/Users/jmt.it-minds.dk/Documents/Repos/mtg-aspnet-v2/Backend/Backups/Notes.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QmFja3Vwc1xOb3Rlcy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 

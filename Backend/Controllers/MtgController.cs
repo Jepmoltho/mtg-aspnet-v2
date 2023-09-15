@@ -60,12 +60,12 @@ namespace Backend.Controllers
         }
 
         [HttpPost("user")]
-        public ActionResult<int> PostUser(User user)
+        public ActionResult<User> PostUser(User user)
         {
             _context.Entry(user).State = EntityState.Added;
             _context.SaveChanges();
 
-            return Ok(user.UserId);
+            return Ok(user);
         }
 
         [HttpGet("cardsfromuser/{userId}")]
@@ -89,25 +89,38 @@ namespace Backend.Controllers
         [HttpPost("cards/{userId}")]
         public ActionResult<int> PostCards([FromBody] CardsInputDto input)
         {
-
-            foreach (string cardname in input.CardNames)
+            if (input.CardNames != null)
             {
-                _context.Cards.Add(new Card { Title = cardname, UserId = input.UserId });
+                foreach (string cardname in input.CardNames)
+                {
+                    _context.Cards.Add(new Card { Title = cardname, UserId = input.UserId });
+                }
+                _context.SaveChanges();
+                return Ok(input.UserId);
             }
-            _context.SaveChanges();
-            return Ok(input.UserId);
+            else
+            {
+                return BadRequest("No cardnames provided");
+            }
         }
 
         //post multiple cards to the same userid
         [HttpPost("cardswithinfo/{userId}")]
         public ActionResult<int> PostCardsWithInfo([FromBody] CardsInfo cardsInfo)
         {
-            foreach (Card card in cardsInfo.Cards)
+            if (cardsInfo.Cards != null)
             {
-                _context.Cards.Add(new Card { Title = card.Title, UserId = cardsInfo.UserId, MtgCardId = card.MtgCardId, Set = card.Set, SuperType = card.SuperType, imgUrl = card.imgUrl });
+                foreach (Card card in cardsInfo.Cards)
+                {
+                    _context.Cards.Add(new Card { Title = card.Title, UserId = cardsInfo.UserId, MtgCardId = card.MtgCardId, Set = card.Set, SuperType = card.SuperType, imgUrl = card.imgUrl });
+                }
+                _context.SaveChanges();
+                return Ok(cardsInfo.UserId);
             }
-            _context.SaveChanges();
-            return Ok(cardsInfo.UserId);
+            else
+            {
+                return BadRequest("No cards provided");
+            }
         }
 
         [HttpGet("commanders/{userId}")]
@@ -122,13 +135,13 @@ namespace Backend.Controllers
         public class CardsInputDto
         {
             public int UserId { get; set; }
-            public List<string> CardNames { get; set; }
+            public List<string>? CardNames { get; set; }
         }
 
         public class CardsInfo
         {
             public int UserId { get; set; }
-            public List<Card> Cards { get; set; }
+            public List<Card>? Cards { get; set; }
         }
 
     }
