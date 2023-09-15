@@ -19,9 +19,13 @@ namespace mtg_aspnet.Pages
         [BindProperty]
         public string NewPassword { get; set; }
 
-        public LoginModel()
+        public LoginModel(ClientApi clientApi)
         {
-            _clientApi = new ClientApi();
+            _clientApi = clientApi; //new ClientApi();
+            this.Username = "";
+            this.Password = "";
+            this.NewUsername = "";
+            this.NewPassword = "";
         }
 
         public async Task<IActionResult> OnPostLoginAsync()
@@ -31,17 +35,25 @@ namespace mtg_aspnet.Pages
                 string username = this.Username;
                 string password = this.Password;
 
-                string userData = await _clientApi.GetUserByUsernameAndPassword(username, password);
+                string? userData = await _clientApi.GetUserByUsernameAndPassword(username, password);
 
                 if (!string.IsNullOrEmpty(userData))
                 {
-                    string userName = JsonConvert.DeserializeObject<UserResponse>(userData).UserName;
-                    int userId = JsonConvert.DeserializeObject<UserResponse>(userData).UserId;
-                    HttpContext.Session.SetInt32("UserId", userId);
-                    HttpContext.Session.SetString("UserName", userName);
-                    Console.WriteLine("Success! " + userName + " logged in");
-
-                    return RedirectToPage("/Index");  //return Page();
+                    UserResponse? userResponse = JsonConvert.DeserializeObject<UserResponse>(userData);
+                    if (userResponse != null)
+                    {
+                        int userId = userResponse.UserId;
+                        string userName = userResponse.UserName;
+                        HttpContext.Session.SetInt32("UserId", userId);
+                        HttpContext.Session.SetString("UserName", userName);
+                        Console.WriteLine("Success! " + userName + " logged in");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Failed to login!");
+                        return RedirectToPage("/Login");
+                    }
+                    return RedirectToPage("/Deckbuilder");
                 }
                 else
                 {
@@ -57,7 +69,7 @@ namespace mtg_aspnet.Pages
             }
         }
 
-        public async Task<IActionResult> OnPostLogoutAsync()
+        public IActionResult OnPostLogoutAsync()
         {
             HttpContext.Session.Clear();
             return RedirectToPage("/Login");
@@ -65,24 +77,31 @@ namespace mtg_aspnet.Pages
 
         public async Task<IActionResult> OnPostRegisterAsync()
         {
-            Console.WriteLine("Registering!");
-
             try
             {
-                Console.WriteLine("Registering user!");
                 string username = this.NewUsername;
                 string password = this.NewPassword;
-                Console.WriteLine("Registering user: " + username + " with password: " + password);
-                string userData = await _clientApi.PostUser(username, password);
+                string? userData = await _clientApi.PostUser(username, password);
                 Console.WriteLine(userData);
                 if (!string.IsNullOrEmpty(userData))
                 {
-                    string userName = JsonConvert.DeserializeObject<UserResponse>(userData).UserName;
-                    int userId = JsonConvert.DeserializeObject<UserResponse>(userData).UserId;
-                    HttpContext.Session.SetInt32("UserId", userId);
-                    HttpContext.Session.SetString("UserName", userName);
-                    Console.WriteLine("Success! " + userName + " logged in");
-
+                    //Console.WriteLine(userData);
+                    UserResponse? userResponse = JsonConvert.DeserializeObject<UserResponse>(userData);
+                    //Console.WriteLine(userResponse);
+                    if (userResponse != null)
+                    {
+                        int userId = userResponse.UserId;
+                        string userName = userResponse.UserName;
+                        HttpContext.Session.Clear();
+                        HttpContext.Session.SetInt32("UserId", userId);
+                        HttpContext.Session.SetString("UserName", userName);
+                        Console.WriteLine("Success! " + userName + " logged in");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Failed to register!");
+                        return RedirectToPage("/Login");
+                    }
                     return RedirectToPage("/Index");  //return Page();
                 }
                 else
@@ -105,7 +124,13 @@ namespace mtg_aspnet.Pages
         public int UserId { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }
-        public List<string> Cards { get; set; }
+        public List<string?> Cards { get; set; }
+        public UserResponse(string userName, string password, List<string?> cards)
+        {
+            this.UserName = userName;
+            this.Password = password;
+            this.Cards = cards;
+        }
     }
 }
 
